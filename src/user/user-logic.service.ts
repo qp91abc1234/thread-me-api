@@ -1,0 +1,54 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from './entities/user.entity';
+import { httpExceptionMap } from 'src/common/utils/execption';
+import { Profile } from 'passport-github2';
+
+@Injectable()
+export class UserLogicService {
+  @InjectRepository(User)
+  private userRepository: Repository<User>;
+
+  getVisiblePropertyNames() {
+    const propertyNames = this.userRepository.metadata.columns
+      .filter((column) => column.propertyName !== 'password')
+      .map((column) => column.propertyName);
+
+    return propertyNames;
+  }
+
+  async findOneWithPermissions(idorname: number | string): Promise<User> {
+    let id, username;
+    if (typeof idorname === 'number') {
+      id = idorname;
+    } else {
+      username = idorname;
+    }
+    const user = await this.userRepository.findOne({
+      where: { id, username },
+      relations: ['roles', 'roles.permissions'],
+    });
+
+    if (!user) {
+      throw httpExceptionMap.NO_USER();
+    }
+
+    return user;
+  }
+
+  async create(profile: Profile) {
+    let user = await this.userRepository.findOne({
+      where: {
+        username: profile.username,
+      },
+    });
+    if (user) {
+      return user;
+    }
+    user = new User();
+    user.username = profile.username;
+    user.password = '123456';
+    return await this.userRepository.save(user);
+  }
+}
