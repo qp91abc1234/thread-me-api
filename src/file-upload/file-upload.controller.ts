@@ -10,7 +10,7 @@ import {
 import { FileUploadService } from './file-upload.service';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { storage } from './common/storage';
-import { httpExceptionMap } from '../common/utils/execption';
+import { httpExceptionMap } from '../common/utils/exception';
 import { ConfigService } from '@nestjs/config';
 import { allowFileType, maxFileSize } from './common/constant';
 import * as OSS from 'ali-oss';

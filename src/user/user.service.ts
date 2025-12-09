@@ -3,7 +3,7 @@ import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { httpExceptionMap } from 'src/common/utils/execption';
+import { httpExceptionMap } from 'src/common/utils/exception';
 import { RoleLogicService } from 'src/role/role-logic.service';
 import { UserLogicService } from './user-logic.service';
 

@@ -1,16 +1,10 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { httpExceptionMap } from '../utils/execption';
+import { httpExceptionMap } from '../utils/exception';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
-  @Inject(Reflector)
-  private reflector: Reflector;
+  constructor(private readonly reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context

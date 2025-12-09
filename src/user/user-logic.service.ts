@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { httpExceptionMap } from 'src/common/utils/execption';
+import { httpExceptionMap } from 'src/common/utils/exception';
 import { Profile } from 'passport-github2';
 
 @Injectable()

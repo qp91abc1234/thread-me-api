@@ -3,7 +3,7 @@ import { CreateRoleDto, UpdateRoleDto } from './dto/role.dto';
 import { Role } from './entities/role.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { httpExceptionMap } from 'src/common/utils/execption';
+import { httpExceptionMap } from 'src/common/utils/exception';
 import { PermissionLogicService } from 'src/permission/permission-logic.service';
 
 @Injectable()

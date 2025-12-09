@@ -3,7 +3,7 @@ import { CreatePermissionDto, UpdatePermissionDto } from './dto/permission.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Permission } from './entities/permission.entity';
 import { Repository } from 'typeorm';
-import { httpExceptionMap } from 'src/common/utils/execption';
+import { httpExceptionMap } from 'src/common/utils/exception';
 
 @Injectable()
 export class PermissionService {

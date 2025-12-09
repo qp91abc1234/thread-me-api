@@ -11,8 +11,10 @@ import { Logger } from 'winston';
 
 @Catch()
 export class CommonExceptionFilter implements ExceptionFilter {
-  @Inject(WINSTON_MODULE_PROVIDER)
-  private readonly logger: Logger;
+  constructor(
+    @Inject(WINSTON_MODULE_PROVIDER)
+    private readonly logger: Logger,
+  ) {}
 
   catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
