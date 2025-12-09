@@ -1,15 +1,12 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { httpExceptionMap } from 'src/common/utils/execption';
 import { UserLogicService } from 'src/user/user-logic.service';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
-  @Inject(UserLogicService)
-  private userLogicService: UserLogicService;
-
-  constructor() {
+  constructor(private readonly userLogicService: UserLogicService) {
     super();
   }
 

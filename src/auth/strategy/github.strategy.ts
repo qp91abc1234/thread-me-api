@@ -5,12 +5,13 @@ import { Profile, Strategy } from 'passport-github2';
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
-  constructor(configService: ConfigService) {
+  constructor(private readonly configService: ConfigService) {
     super({
       clientID: configService.get('GITHUB_CLIENT_ID'),
       clientSecret: configService.get('GITHUB_SECRET'),
       callbackURL: configService.get('APP_URL') + '/auth/github-callback',
-      scope: ['public_profile'],
+      // 请求访问用户公开资料
+      scope: ['read:user'],
     });
   }
 

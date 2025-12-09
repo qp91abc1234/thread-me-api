@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/user/entities/user.entity';
 import { AuthLogicService } from './auth-logic.service';
@@ -7,12 +7,11 @@ import { Profile } from 'passport-github2';
 
 @Injectable()
 export class AuthService {
-  @Inject(UserLogicService)
-  private userLogicService: UserLogicService;
-  @Inject(AuthLogicService)
-  private authLogicService: AuthLogicService;
-  @Inject(JwtService)
-  private jwtService: JwtService;
+  constructor(
+    private readonly userLogicService: UserLogicService,
+    private readonly authLogicService: AuthLogicService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async login(user: User) {
     return this.authLogicService.sign(user);

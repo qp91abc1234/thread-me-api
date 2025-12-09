@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { JwtStrategy } from './strategy/jwt.strategy';
-import { ConfigService } from '@nestjs/config';
 import { LocalStrategy } from './strategy/local.strategy';
 import { GithubStrategy } from './strategy/github.strategy';
 import { AuthController } from './auth.controller';
@@ -14,21 +13,9 @@ import { UserModule } from 'src/user/user.module';
   providers: [
     AuthService,
     AuthLogicService,
-    {
-      provide: JwtStrategy,
-      useFactory: (configService: ConfigService) => {
-        return new JwtStrategy(configService);
-      },
-      inject: [ConfigService],
-    },
+    JwtStrategy,
     LocalStrategy,
-    {
-      provide: GithubStrategy,
-      useFactory: (configService: ConfigService) => {
-        return new GithubStrategy(configService);
-      },
-      inject: [ConfigService],
-    },
+    GithubStrategy,
   ],
 })
 export class AuthModule {}
