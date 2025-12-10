@@ -17,3 +17,10 @@ export class UpdateRoleDto extends PartialType(CreateRoleDto) {
 }
 
 export class GetRoleVo extends Role {}
+
+export class GetRoleListVo {
+  list: GetRoleVo[];
+  total: number;
+  page: number;
+  pageSize: number;
+}

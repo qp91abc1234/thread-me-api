@@ -6,9 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
-import { CreateRoleDto, GetRoleVo, UpdateRoleDto } from './dto/role.dto';
+import {
+  CreateRoleDto,
+  GetRoleListVo,
+  GetRoleVo,
+  UpdateRoleDto,
+} from './dto/role.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('role')
@@ -22,8 +28,17 @@ export class RoleController {
   }
 
   @Get()
-  async findAll(): Promise<GetRoleVo[]> {
-    return await this.roleService.findAll();
+  async findList(
+    @Query('page') page: number,
+    @Query('pageSize') pageSize: number,
+  ): Promise<GetRoleListVo> {
+    const [list, total] = await this.roleService.findList(page, pageSize);
+    return {
+      list,
+      total,
+      page,
+      pageSize,
+    };
   }
 
   @Get(':id')

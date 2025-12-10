@@ -22,8 +22,14 @@ export class PermissionService {
     return this.permissionRepository.save(createPermissionDto);
   }
 
-  findAll() {
-    return this.permissionRepository.find();
+  findList(page: number, pageSize: number) {
+    return this.permissionRepository.findAndCount({
+      skip: (page - 1) * pageSize, // 计算跳过的偏移量
+      take: pageSize, // 取多少条
+      order: {
+        id: 'DESC', // 通常分页都要配合排序，否则顺序可能不稳定
+      },
+    });
   }
 
   async findOne(id: number) {

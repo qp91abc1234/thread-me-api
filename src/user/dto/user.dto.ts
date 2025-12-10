@@ -22,3 +22,10 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
 }
 
 export class GetUserVo extends OmitType(User, ['password', 'roles']) {}
+
+export class GetUserListVo {
+  list: GetUserVo[];
+  total: number;
+  page: number;
+  pageSize: number;
+}

@@ -32,8 +32,14 @@ export class RoleService {
     return this.roleRepository.save(role);
   }
 
-  findAll() {
-    return this.roleRepository.find();
+  findList(page: number, pageSize: number) {
+    return this.roleRepository.findAndCount({
+      skip: (page - 1) * pageSize, // 计算跳过的偏移量
+      take: pageSize, // 取多少条
+      order: {
+        id: 'DESC', // 通常分页都要配合排序，否则顺序可能不稳定
+      },
+    });
   }
 
   async findOne(id: number) {

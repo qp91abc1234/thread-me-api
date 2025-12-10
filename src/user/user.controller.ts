@@ -6,9 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto, GetUserVo, UpdateUserDto } from './dto/user.dto';
+import {
+  CreateUserDto,
+  GetUserListVo,
+  GetUserVo,
+  UpdateUserDto,
+} from './dto/user.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('user')
@@ -25,8 +31,17 @@ export class UserController {
   }
 
   @Get()
-  async findAll(): Promise<GetUserVo[]> {
-    return await this.userService.findAll();
+  async findList(
+    @Query('page') page: number,
+    @Query('pageSize') pageSize: number,
+  ): Promise<GetUserListVo> {
+    const [list, total] = await this.userService.findList(page, pageSize);
+    return {
+      list,
+      total,
+      page,
+      pageSize,
+    };
   }
 
   @Get(':id')

@@ -6,10 +6,12 @@ import {
   Param,
   Delete,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { PermissionService } from './permission.service';
 import {
   CreatePermissionDto,
+  GetPermissionListVo,
   GetPermissionVo,
   UpdatePermissionDto,
 } from './dto/permission.dto';
@@ -26,8 +28,17 @@ export class PermissionController {
   }
 
   @Get()
-  async findAll(): Promise<GetPermissionVo[]> {
-    return await this.permissionService.findAll();
+  async findList(
+    @Query('page') page: number,
+    @Query('pageSize') pageSize: number,
+  ): Promise<GetPermissionListVo> {
+    const [list, total] = await this.permissionService.findList(page, pageSize);
+    return {
+      list,
+      total,
+      page,
+      pageSize,
+    };
   }
 
   @Get(':id')

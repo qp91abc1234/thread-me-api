@@ -15,3 +15,10 @@ export class UpdatePermissionDto extends PartialType(CreatePermissionDto) {
 }
 
 export class GetPermissionVo extends Permission {}
+
+export class GetPermissionListVo {
+  list: GetPermissionVo[];
+  total: number;
+  page: number;
+  pageSize: number;
+}

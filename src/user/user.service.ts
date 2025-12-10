@@ -37,9 +37,14 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
-  findAll() {
-    return this.userRepository.find({
+  findList(page: number, pageSize: number) {
+    return this.userRepository.findAndCount({
       select: this.propertyNames,
+      skip: (page - 1) * pageSize, // 计算跳过的偏移量
+      take: pageSize, // 取多少条
+      order: {
+        id: 'DESC', // 通常分页都要配合排序，否则顺序可能不稳定
+      },
     });
   }
 
