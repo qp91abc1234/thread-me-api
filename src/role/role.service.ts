@@ -16,11 +16,11 @@ export class RoleService {
   async create(createRoleDto: CreateRoleDto) {
     let role = await this.roleRepository.findOne({
       where: {
-        name: CreateRoleDto.name,
+        name: createRoleDto.name,
       },
     });
     if (role) {
-      throw BusinessExceptions.EXIST(`角色 ${CreateRoleDto.name} `);
+      throw BusinessExceptions.EXIST(`角色 ${createRoleDto.name} `);
     }
     role = new Role(createRoleDto);
     if (createRoleDto.permissionIds) {
@@ -29,7 +29,7 @@ export class RoleService {
       );
     }
 
-    this.roleRepository.save(role);
+    return this.roleRepository.save(role);
   }
 
   findAll() {
@@ -60,11 +60,11 @@ export class RoleService {
       );
     }
 
-    this.roleRepository.save(role);
+    return this.roleRepository.save(role);
   }
 
   async remove(id: number) {
     await this.findOne(+id);
-    this.roleRepository.delete(id);
+    return this.roleRepository.delete(id);
   }
 }

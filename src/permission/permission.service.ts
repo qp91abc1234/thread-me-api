@@ -38,7 +38,7 @@ export class PermissionService {
 
   async update(updatePermissionDto: UpdatePermissionDto) {
     const permission = await this.findOne(updatePermissionDto.id);
-    await this.permissionRepository.save({
+    return this.permissionRepository.save({
       ...permission,
       ...updatePermissionDto,
     });
@@ -46,6 +46,6 @@ export class PermissionService {
 
   async remove(id: number) {
     await this.findOne(+id);
-    this.permissionRepository.delete(id);
+    return this.permissionRepository.delete(id);
   }
 }

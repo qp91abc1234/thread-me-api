@@ -4,11 +4,14 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { BusinessExceptions } from 'src/common/utils/exception';
 import { Profile } from 'passport-github2';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserLogicService {
   @InjectRepository(User)
   private userRepository: Repository<User>;
+
+  constructor(private readonly configService: ConfigService) {}
 
   getVisiblePropertyNames() {
     const propertyNames = this.userRepository.metadata.columns
@@ -48,7 +51,7 @@ export class UserLogicService {
     }
     user = new User();
     user.username = profile.username;
-    user.password = '123456';
+    user.password = this.configService.get('OAUTH_DEFAULT_PASSWORD');
     return await this.userRepository.save(user);
   }
 }

@@ -78,7 +78,7 @@ import { LangchainModule } from './langchain/langchain.module';
             ),
           }),
           new winston.transports.Console({
-            level: 'debug',
+            level: configService.get('WINSTON_LEVEL'),
             format: winston.format.combine(
               winston.format.timestamp(),
               utilities.format.nestLike(),

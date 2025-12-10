@@ -34,7 +34,7 @@ export class UserService {
       user.roles = await this.roleLogicService.findByIds(createUserDto.roleIds);
     }
 
-    this.userRepository.save(user);
+    return this.userRepository.save(user);
   }
 
   findAll() {
@@ -63,16 +63,14 @@ export class UserService {
       ...updateUserDto,
     };
     if (updateUserDto.roleIds) {
-      user.roles = await await this.roleLogicService.findByIds(
-        updateUserDto.roleIds,
-      );
+      user.roles = await this.roleLogicService.findByIds(updateUserDto.roleIds);
     }
 
-    this.userRepository.save(user);
+    return this.userRepository.save(user);
   }
 
   async remove(id: number) {
     await this.findOne(+id);
-    this.userRepository.delete(id);
+    return this.userRepository.delete(id);
   }
 }
