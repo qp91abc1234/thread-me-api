@@ -3,7 +3,7 @@ import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { httpExceptionMap } from 'src/common/utils/exception';
+import { BusinessExceptions } from 'src/common/utils/exception';
 import { RoleLogicService } from 'src/role/role-logic.service';
 import { UserLogicService } from './user-logic.service';
 
@@ -27,7 +27,7 @@ export class UserService {
       },
     });
     if (user) {
-      throw httpExceptionMap.EXIST(`用户 ${createUserDto.username} `);
+      throw BusinessExceptions.EXIST(`用户 ${createUserDto.username} `);
     }
     user = new User(createUserDto);
     if (createUserDto.roleIds) {
@@ -51,7 +51,7 @@ export class UserService {
       },
     });
     if (!user) {
-      throw httpExceptionMap.NO_USER();
+      throw BusinessExceptions.NO_USER();
     }
     return user;
   }

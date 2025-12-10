@@ -3,7 +3,7 @@ import { CreateRoleDto, UpdateRoleDto } from './dto/role.dto';
 import { Role } from './entities/role.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { httpExceptionMap } from 'src/common/utils/exception';
+import { BusinessExceptions } from 'src/common/utils/exception';
 import { PermissionLogicService } from 'src/permission/permission-logic.service';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class RoleService {
       },
     });
     if (role) {
-      throw httpExceptionMap.EXIST(`角色 ${CreateRoleDto.name} `);
+      throw BusinessExceptions.EXIST(`角色 ${CreateRoleDto.name} `);
     }
     role = new Role(createRoleDto);
     if (createRoleDto.permissionIds) {
@@ -43,7 +43,7 @@ export class RoleService {
       },
     });
     if (!role) {
-      throw httpExceptionMap.NO_ROLE();
+      throw BusinessExceptions.NO_ROLE();
     }
     return role;
   }

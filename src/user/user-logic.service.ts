@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { httpExceptionMap } from 'src/common/utils/exception';
+import { BusinessExceptions } from 'src/common/utils/exception';
 import { Profile } from 'passport-github2';
 
 @Injectable()
@@ -31,7 +31,7 @@ export class UserLogicService {
     });
 
     if (!user) {
-      throw httpExceptionMap.NO_USER();
+      throw BusinessExceptions.NO_USER();
     }
 
     return user;

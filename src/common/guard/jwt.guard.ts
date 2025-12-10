@@ -1,6 +1,7 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
+import { METADATA_KEY } from '../constant/constant';
 
 @Injectable()
 export class JwtGuard extends AuthGuard('jwt') {
@@ -10,7 +11,7 @@ export class JwtGuard extends AuthGuard('jwt') {
 
   canActivate(context: ExecutionContext) {
     const requireLogin = this.reflector.getAllAndOverride<boolean>(
-      'require-login',
+      METADATA_KEY.REQUIRE_LOGIN,
       [context.getHandler(), context.getClass()],
     );
 

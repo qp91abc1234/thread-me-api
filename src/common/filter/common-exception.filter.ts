@@ -19,11 +19,16 @@ export class CommonExceptionFilter implements ExceptionFilter {
   catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
 
-    this.logger.error(exception.message);
+    this.logger.error(
+      `[${request.method}] ${request.url}: ${exception.message}`,
+    );
+
     response.json({
       status: HttpStatus.INTERNAL_SERVER_ERROR,
       message: exception.message,
+      timestamp: new Date().toISOString(),
     });
   }
 }

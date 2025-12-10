@@ -1,3 +1,21 @@
 export const PROVIDE_KEY = {
   REDIS_CLIENT: 'REDIS_CLIENT',
 };
+
+export const METADATA_KEY = {
+  REQUIRE_LOGIN: 'require-login',
+  REQUIRE_PERMISSION: 'require-permission',
+};
+
+export enum ErrorCode {
+  HTTP_ERROR = 'HTTP_ERROR',
+  EXIST = 'EXIST',
+  NO_USER = 'NO_USER',
+  NO_ROLE = 'NO_ROLE',
+  NO_PERMISSION = 'NO_PERMISSION',
+  PWD_ERR = 'PWD_ERR',
+  NO_AUTH = 'NO_AUTH',
+  UNSUPPORT_FILE_TYPE = 'UNSUPPORT_FILE_TYPE',
+  UNLOGIN = 'UNLOGIN',
+  SYSTEM_ERROR = 'SYSTEM_ERROR',
+}

@@ -14,7 +14,7 @@ export class RespInterceptor implements NestInterceptor {
       map((val) => {
         return {
           status: HttpStatus.OK,
-          msg: 'success',
+          message: 'success',
           data: val || {},
         };
       }),

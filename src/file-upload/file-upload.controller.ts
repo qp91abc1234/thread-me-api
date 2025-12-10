@@ -10,7 +10,7 @@ import {
 import { FileUploadService } from './file-upload.service';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { storage } from './common/storage';
-import { httpExceptionMap } from '../common/utils/exception';
+import { BusinessExceptions } from '../common/utils/exception';
 import { ConfigService } from '@nestjs/config';
 import { allowFileType, maxFileSize } from './common/constant';
 import * as OSS from 'ali-oss';
@@ -47,7 +47,7 @@ export class FileUploadController {
       },
       fileFilter(req, file, cb) {
         if (!file.mimetype.match(allowFileType)) {
-          cb(httpExceptionMap.UNSUPPORT_FILE_TYPE(), false);
+          cb(BusinessExceptions.UNSUPPORT_FILE_TYPE(), false);
         } else {
           cb(null, true);
         }

@@ -3,7 +3,7 @@ import { CreatePermissionDto, UpdatePermissionDto } from './dto/permission.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Permission } from './entities/permission.entity';
 import { Repository } from 'typeorm';
-import { httpExceptionMap } from 'src/common/utils/exception';
+import { BusinessExceptions } from 'src/common/utils/exception';
 
 @Injectable()
 export class PermissionService {
@@ -17,7 +17,7 @@ export class PermissionService {
       },
     });
     if (permission) {
-      throw httpExceptionMap.EXIST(`权限 ${createPermissionDto.name} `);
+      throw BusinessExceptions.EXIST(`权限 ${createPermissionDto.name} `);
     }
     return this.permissionRepository.save(createPermissionDto);
   }
@@ -31,7 +31,7 @@ export class PermissionService {
       where: { id },
     });
     if (!permission) {
-      throw httpExceptionMap.NO_PERMISSION();
+      throw BusinessExceptions.NO_PERMISSION();
     }
     return permission;
   }

@@ -1,6 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { httpExceptionMap } from '../utils/exception';
+import { BusinessExceptions } from '../utils/exception';
+import { METADATA_KEY } from '../constant/constant';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
@@ -17,7 +18,7 @@ export class PermissionGuard implements CanActivate {
 
     const permissions = request.user.permissions;
     const requiredPermissions = this.reflector.getAllAndOverride<string[]>(
-      'require-permission',
+      METADATA_KEY.REQUIRE_PERMISSION,
       [context.getClass(), context.getHandler()],
     );
 
@@ -29,7 +30,7 @@ export class PermissionGuard implements CanActivate {
       const curPermission = requiredPermissions[i];
       const found = permissions.find((item) => item === curPermission);
       if (!found) {
-        throw httpExceptionMap.NO_AUTH();
+        throw BusinessExceptions.NO_AUTH();
       }
     }
 
