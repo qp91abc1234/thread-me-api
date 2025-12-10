@@ -55,4 +55,10 @@ export const BusinessExceptions = {
       { code: ErrorCode.UNLOGIN, message: '用户未登录或Token过期' },
       HttpStatus.UNAUTHORIZED,
     ),
+
+  TOKEN_REUSED: () =>
+    createException({
+      code: ErrorCode.TOKEN_REUSED,
+      message: 'token 被重复使用',
+    }),
 };
