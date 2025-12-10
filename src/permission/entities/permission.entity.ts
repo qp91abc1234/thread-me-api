@@ -1,7 +1,9 @@
+import { Role } from 'src/role/entities/role.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -21,6 +23,9 @@ export class Permission {
 
   @UpdateDateColumn()
   updateTime: Date;
+
+  @ManyToMany(() => Role, (role) => role.permissions)
+  roles: Role[];
 
   constructor(partial: Partial<Permission>) {
     Object.assign(this, partial);

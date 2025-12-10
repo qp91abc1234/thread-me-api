@@ -31,7 +31,7 @@ export class User {
   updateTime: Date;
 
   @JoinTable()
-  @ManyToMany(() => Role)
+  @ManyToMany(() => Role, (role) => role.users)
   roles: Role[];
 
   constructor(partial: Partial<User> = {}) {
