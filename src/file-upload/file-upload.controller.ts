@@ -4,11 +4,12 @@ import {
   Get,
   Post,
   Query,
+  UploadedFile,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileUploadService } from './file-upload.service';
-import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { storage } from './common/storage';
 import { BusinessExceptions } from '../common/utils/exception';
 import { ConfigService } from '@nestjs/config';
@@ -27,14 +28,14 @@ export class FileUploadController {
 
   constructor(
     private readonly fileUploadService: FileUploadService,
-    private readonly config: ConfigService,
+    private readonly configService: ConfigService,
   ) {
-    this.uploadBaseUrl = `${this.config.get('APP_URL')}/static/upload/`;
+    this.uploadBaseUrl = `${this.configService.get('APP_URL')}/static/upload/`;
     this.ossClient = new OSS({
-      region: this.config.get('OSS_REGION'),
-      bucket: this.config.get('OSS_BUCKET'),
-      accessKeyId: this.config.get('OSS_ACCESS_KEY_ID'),
-      accessKeySecret: this.config.get('OSS_ACCESS_KEY_SECRET'),
+      region: this.configService.get('OSS_REGION'),
+      bucket: this.configService.get('OSS_BUCKET'),
+      accessKeyId: this.configService.get('OSS_ACCESS_KEY_ID'),
+      accessKeySecret: this.configService.get('OSS_ACCESS_KEY_SECRET'),
     });
   }
 
@@ -59,22 +60,21 @@ export class FileUploadController {
     return fileUrls;
   }
 
-  @Post('uploadLargeFile')
+  @Post('uploadChunk')
   @UseInterceptors(
-    AnyFilesInterceptor({
+    FileInterceptor('file', {
+      // 'file' 是前端表单字段名，要和前端一致
       storage: storage,
     }),
   )
-  async uploadLargeFile(
-    @UploadedFiles() files: Array<Express.Multer.File>,
+  async uploadChunk(
+    @UploadedFile() file: Express.Multer.File,
     @Body() body: { name: string },
   ) {
     const fileName = body.name.match(/(.+)\-\d+$/)[1];
     const chunkDir = `${uploadDest}chunks_${fileName}`;
-
     await fs.promises.mkdir(chunkDir, { recursive: true }); // 自动判断存在
-    await fs.promises.cp(files[0].path, chunkDir + '/' + body.name);
-    await fs.promises.rm(files[0].path);
+    await fs.promises.rename(file.path, chunkDir + '/' + body.name);
   }
 
   @Get('merge')
@@ -83,30 +83,39 @@ export class FileUploadController {
     const chunkDir = `${uploadDest}chunks_${name}`;
     const files = await fs.promises.readdir(chunkDir);
 
-    const fileStats = await Promise.all(
-      files.map((file) => fs.promises.stat(`${chunkDir}/${file}`)),
-    );
-
-    let count = 0;
-    let startPos = 0;
-    files.forEach((file, index) => {
-      const filePath = chunkDir + '/' + file;
-      const stream = fs.createReadStream(filePath);
-      stream
-        .pipe(
-          fs.createWriteStream(dest, {
-            start: startPos,
-          }),
-        )
-        .on('finish', () => {
-          count++;
-          if (count === files.length) {
-            fs.promises.rm(chunkDir, { recursive: true });
-          }
-        });
-
-      startPos += fileStats[index].size;
+    // 1. 排序文件，确保顺序正确
+    files.sort((a, b) => {
+      const aNum = parseInt(a.match(/\-(\d+)$/)[1]);
+      const bNum = parseInt(b.match(/\-(\d+)$/)[1]);
+      return aNum - bNum;
     });
+
+    let startPos = 0;
+
+    // 2. 顺序处理每个块
+    for (const file of files) {
+      const filePath = `${chunkDir}/${file}`;
+      const stat = await fs.promises.stat(filePath);
+
+      // 3. 等待每个流完成
+      await new Promise((resolve, reject) => {
+        fs.createReadStream(filePath)
+          .pipe(
+            fs.createWriteStream(dest, {
+              start: startPos,
+              flags: 'a', // append 模式
+            }),
+          )
+          .on('finish', resolve)
+          .on('error', reject);
+      });
+
+      startPos += stat.size;
+    }
+
+    // 4. 合并完成后删除临时目录
+    await fs.promises.rm(chunkDir, { recursive: true });
+
     return `${this.uploadBaseUrl}${name}`;
   }
 
@@ -121,7 +130,7 @@ export class FileUploadController {
       ],
     });
 
-    const host = `http://${this.config.get('OSS_BUCKET')}.${this.config.get('OSS_REGION')}.aliyuncs.com/img`;
+    const host = `http://${this.configService.get('OSS_BUCKET')}.${this.configService.get('OSS_REGION')}.aliyuncs.com/img`;
     return {
       ...res,
       host,
