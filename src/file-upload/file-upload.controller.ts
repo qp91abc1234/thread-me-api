@@ -65,29 +65,31 @@ export class FileUploadController {
       storage: storage,
     }),
   )
-  uploadLargeFile(
+  async uploadLargeFile(
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Body() body: { name: string },
   ) {
     const fileName = body.name.match(/(.+)\-\d+$/)[1];
     const chunkDir = `${uploadDest}chunks_${fileName}`;
 
-    if (!fs.existsSync(chunkDir)) {
-      fs.mkdirSync(chunkDir);
-    }
-    fs.cpSync(files[0].path, chunkDir + '/' + body.name);
-    fs.rmSync(files[0].path);
+    await fs.promises.mkdir(chunkDir, { recursive: true }); // 自动判断存在
+    await fs.promises.cp(files[0].path, chunkDir + '/' + body.name);
+    await fs.promises.rm(files[0].path);
   }
 
   @Get('merge')
-  merge(@Query('name') name: string) {
+  async merge(@Query('name') name: string) {
     const dest = `${uploadDest}${name}`;
     const chunkDir = `${uploadDest}chunks_${name}`;
-    const files = fs.readdirSync(chunkDir);
+    const files = await fs.promises.readdir(chunkDir);
+
+    const fileStats = await Promise.all(
+      files.map((file) => fs.promises.stat(`${chunkDir}/${file}`)),
+    );
 
     let count = 0;
     let startPos = 0;
-    files.forEach((file) => {
+    files.forEach((file, index) => {
       const filePath = chunkDir + '/' + file;
       const stream = fs.createReadStream(filePath);
       stream
@@ -99,17 +101,11 @@ export class FileUploadController {
         .on('finish', () => {
           count++;
           if (count === files.length) {
-            fs.rm(
-              chunkDir,
-              {
-                recursive: true,
-              },
-              () => {},
-            );
+            fs.promises.rm(chunkDir, { recursive: true });
           }
         });
 
-      startPos += fs.statSync(filePath).size;
+      startPos += fileStats[index].size;
     });
     return `${this.uploadBaseUrl}${name}`;
   }
