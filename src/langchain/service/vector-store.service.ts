@@ -69,7 +69,7 @@ export class VectorStoreService {
     }
   }
 
-  async retriver(
+  async retriever(
     query: string,
     opts?: {
       easy?: boolean;

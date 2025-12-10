@@ -23,7 +23,7 @@ export class RagChainService {
     >([
       RunnablePassthrough.assign({
         context: async (input) => {
-          return await this.vectorStoreService.retriver(input.question);
+          return await this.vectorStoreService.retriever(input.question);
         },
       }),
       params.template,

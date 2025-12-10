@@ -25,9 +25,12 @@ export class CommonExceptionFilter implements ExceptionFilter {
       `[${request.method}] ${request.url}: ${exception.message}`,
     );
 
+    // 生产环境返回通用信息，开发环境返回详细信息
+    const isDev = process.env.NODE_ENV === 'development';
+
     response.json({
       status: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: exception.message,
+      message: isDev ? exception.message : '服务器内部错误，请稍后重试',
       timestamp: new Date().toISOString(),
     });
   }
