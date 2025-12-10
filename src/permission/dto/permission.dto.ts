@@ -5,7 +5,7 @@ import { Permission } from '../entities/permission.entity';
 export class CreatePermissionDto {
   @IsNotEmpty()
   @IsString()
-  @Length(1, 20)
+  @Length(2, 50)
   name: string;
 }
 

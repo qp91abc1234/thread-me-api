@@ -10,6 +10,7 @@ import {
 import { Role } from '../../role/entities/role.entity';
 import { BeforeInsert, BeforeUpdate } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { IsNotEmpty, IsString, Length, MinLength } from 'class-validator';
 
 @Entity()
 export class User {
@@ -18,12 +19,19 @@ export class User {
 
   @Column({
     length: 50,
+    unique: true,
   })
+  @IsNotEmpty({ message: '用户名不能为空' })
+  @IsString({ message: '用户名必须是字符串' })
+  @Length(2, 50, { message: '用户名长度必须在2-50个字符之间' })
   username: string;
 
   @Column({
-    length: 50,
+    length: 100,
   })
+  @IsNotEmpty({ message: '密码不能为空' })
+  @IsString({ message: '密码必须是字符串' })
+  @MinLength(6, { message: '密码长度至少6个字符' })
   password: string;
 
   @CreateDateColumn()

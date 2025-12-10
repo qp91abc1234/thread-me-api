@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { IsNotEmpty, IsString, Length } from 'class-validator';
 
 @Entity()
 export class Permission {
@@ -15,7 +16,11 @@ export class Permission {
 
   @Column({
     length: 50,
+    unique: true,
   })
+  @IsNotEmpty({ message: '权限名不能为空' })
+  @IsString({ message: '权限名必须是字符串' })
+  @Length(2, 50, { message: '权限名长度必须在2-50个字符之间' })
   name: string;
 
   @CreateDateColumn()

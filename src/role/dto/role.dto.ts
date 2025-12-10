@@ -5,7 +5,7 @@ import { Role } from '../entities/role.entity';
 export class CreateRoleDto {
   @IsNotEmpty()
   @IsString()
-  @Length(1, 20)
+  @Length(2, 20)
   name: string;
 
   permissionIds?: number[];

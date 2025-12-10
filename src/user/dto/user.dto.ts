@@ -5,12 +5,12 @@ import { User } from '../entities/user.entity';
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
-  @Length(1, 20)
+  @Length(2, 50)
   username: string;
 
   @IsNotEmpty()
   @IsString()
-  @Length(1, 20)
+  @Length(6, 100)
   password: string;
 
   roleIds?: number[];
