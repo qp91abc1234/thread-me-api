@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { BusinessExceptions } from 'src/common/utils/exception';
 import { UserLogicService } from 'src/user/user-logic.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
@@ -12,7 +13,8 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
 
   async validate(username: string, password: string) {
     const user = await this.userLogicService.findOneWithPermissions(username);
-    if (user.password !== password) {
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
       throw BusinessExceptions.PWD_ERR();
     }
     return user;

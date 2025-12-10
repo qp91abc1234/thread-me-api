@@ -8,6 +8,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Role } from '../../role/entities/role.entity';
+import { BeforeInsert, BeforeUpdate } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Entity()
 export class User {
@@ -36,5 +38,13 @@ export class User {
 
   constructor(partial: Partial<User> = {}) {
     Object.assign(this, partial);
+  }
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword() {
+    if (this.password && !this.password.startsWith('$2b$')) {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
   }
 }
