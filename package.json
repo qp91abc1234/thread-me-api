@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nest start --watch",
-    "seed": "cross-env NODE_ENV=development ts-node src/seed.ts",
+    "seed": "cross-env NODE_ENV=development ts-node -r tsconfig-paths/register src/seed.ts",
     "repl": "cross-env NODE_ENV=development nest start --watch --entryFile repl",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
