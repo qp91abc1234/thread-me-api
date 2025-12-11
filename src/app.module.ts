@@ -31,13 +31,21 @@ import { LangchainModule } from './langchain/langchain.module';
     }),
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `.env.${process.env.NODE_ENV || 'development'}.local`,
+      // 依次查找：
+      // 1. .env.production.local (本地特定覆盖)
+      // 2. .env.production (你刚才生成的)
+      // 3. .env (通用默认)
+      envFilePath: [
+        `.env.${process.env.NODE_ENV || 'development'}.local`,
+        `.env.${process.env.NODE_ENV || 'development'}`,
+        '.env',
+      ],
     }),
     TypeOrmModule.forRootAsync({
       useFactory: (config: ConfigService) => {
         return {
           type: 'mysql',
-          synchronize: true,
+          synchronize: config.get('DB_SYNCHRONIZE') === 'true',
           logging: true,
           entities: [`${__dirname}/**/*.entity{.ts,.js}`],
           poolSize: 10,

@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
-import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -27,8 +26,8 @@ async function bootstrap() {
   // 日志
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
-  const config = app.get(ConfigService);
-  await app.listen(config.get('APP_PORT'), config.get('APP_HOST'));
+  await app.listen(3000, '0.0.0.0');
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
+
 bootstrap();
