@@ -17,6 +17,10 @@ export class PermissionGuard implements CanActivate {
     }
 
     const permissions = request.user.permissions;
+    if (permissions.includes('sys:manage')) {
+      return true;
+    }
+
     const requiredPermissions = this.reflector.getAllAndOverride<string[]>(
       METADATA_KEY.REQUIRE_PERMISSION,
       [context.getClass(), context.getHandler()],
