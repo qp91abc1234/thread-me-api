@@ -25,6 +25,12 @@ export class Role {
   @Length(2, 20, { message: '角色名长度必须在2-20个字符之间' })
   name: string;
 
+  @Column({
+    default: false,
+    comment: '是否为系统默认角色，不可删除',
+  })
+  isSystem: boolean;
+
   @CreateDateColumn()
   createTime: Date;
 
@@ -38,7 +44,7 @@ export class Role {
   @ManyToMany(() => Permission)
   permissions: Permission[];
 
-  constructor(partial: Partial<Role>) {
+  constructor(partial?: Partial<Role>) {
     Object.assign(this, partial);
   }
 }

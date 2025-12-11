@@ -75,7 +75,10 @@ export class UserService {
   }
 
   async remove(id: number) {
-    await this.findOne(+id);
+    const user = await this.findOne(+id);
+    if (user.isSystem) {
+      throw BusinessExceptions.NO_AUTH();
+    }
     return this.userRepository.delete(id);
   }
 }

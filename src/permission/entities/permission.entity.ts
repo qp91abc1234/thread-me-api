@@ -23,6 +23,12 @@ export class Permission {
   @Length(2, 50, { message: '权限名长度必须在2-50个字符之间' })
   name: string;
 
+  @Column({
+    default: false,
+    comment: '是否为系统默认权限，不可删除',
+  })
+  isSystem: boolean;
+
   @CreateDateColumn()
   createTime: Date;
 
@@ -32,7 +38,7 @@ export class Permission {
   @ManyToMany(() => Role, (role) => role.permissions)
   roles: Role[];
 
-  constructor(partial: Partial<Permission>) {
+  constructor(partial?: Partial<Permission>) {
     Object.assign(this, partial);
   }
 }

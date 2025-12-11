@@ -34,6 +34,12 @@ export class User {
   @MinLength(6, { message: '密码长度至少6个字符' })
   password: string;
 
+  @Column({
+    default: false,
+    comment: '是否为系统默认用户，不可删除',
+  })
+  isSystem: boolean;
+
   @CreateDateColumn()
   createTime: Date;
 
@@ -44,7 +50,7 @@ export class User {
   @ManyToMany(() => Role, (role) => role.users)
   roles: Role[];
 
-  constructor(partial: Partial<User> = {}) {
+  constructor(partial?: Partial<User>) {
     Object.assign(this, partial);
   }
 

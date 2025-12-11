@@ -51,7 +51,10 @@ export class PermissionService {
   }
 
   async remove(id: number) {
-    await this.findOne(+id);
+    const permission = await this.findOne(+id);
+    if (permission.isSystem) {
+      throw BusinessExceptions.NO_AUTH();
+    }
     return this.permissionRepository.delete(id);
   }
 }

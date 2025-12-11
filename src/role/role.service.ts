@@ -70,7 +70,10 @@ export class RoleService {
   }
 
   async remove(id: number) {
-    await this.findOne(+id);
+    const role = await this.findOne(+id);
+    if (role.isSystem) {
+      throw BusinessExceptions.NO_AUTH(); // 复用无权限错误，或者自定义错误
+    }
     return this.roleRepository.delete(id);
   }
 }
