@@ -1,3 +1,10 @@
+import { register } from 'tsconfig-paths';
+
+register({
+  baseUrl: './',
+  paths: {},
+});
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { getRepositoryToken } from '@nestjs/typeorm';
