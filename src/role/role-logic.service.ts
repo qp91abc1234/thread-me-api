@@ -16,4 +16,12 @@ export class RoleLogicService {
     });
     return roles;
   }
+
+  async findByName(name: string) {
+    return await this.roleRepository.findOne({
+      where: {
+        name,
+      },
+    });
+  }
 }

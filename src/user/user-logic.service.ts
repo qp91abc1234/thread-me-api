@@ -1,15 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { BusinessExceptions } from 'src/common/utils/exception';
 import { Profile } from 'passport-github2';
 import { ConfigService } from '@nestjs/config';
+import { RoleLogicService } from 'src/role/role-logic.service';
 
 @Injectable()
 export class UserLogicService {
   @InjectRepository(User)
   private userRepository: Repository<User>;
+
+  @Inject(RoleLogicService)
+  private roleLogicService: RoleLogicService;
 
   constructor(private readonly configService: ConfigService) {}
 
@@ -52,6 +56,12 @@ export class UserLogicService {
     user = new User();
     user.username = profile.username;
     user.password = this.configService.get('OAUTH_DEFAULT_PASSWORD');
+
+    const defaultRole = await this.roleLogicService.findByName('general_user');
+    if (defaultRole) {
+      user.roles = [defaultRole];
+    }
+
     return await this.userRepository.save(user);
   }
 }
