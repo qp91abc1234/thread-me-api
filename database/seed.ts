@@ -6,11 +6,11 @@ register({
 });
 
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from '../src/app.module';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Permission } from './permission/entities/permission.entity';
-import { Role } from './role/entities/role.entity';
-import { User } from './user/entities/user.entity';
+import { Permission } from '../src/permission/entities/permission.entity';
+import { Role } from '../src/role/entities/role.entity';
+import { User } from '../src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 
 const SYS_MANAGE_PERM = 'sys:manage';

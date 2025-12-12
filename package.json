@@ -7,7 +7,6 @@
   "license": "UNLICENSED",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nest start --watch",
-    "seed": "cross-env NODE_ENV=development ts-node src/seed.ts",
     "repl": "cross-env NODE_ENV=development nest start --watch --entryFile repl",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -21,11 +20,11 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm": "typeorm-ts-node-commonjs",
-    "migration:generate": "typeorm-ts-node-commonjs migration:generate -d typeorm-cli.config.ts",
-    "migration:run": "typeorm-ts-node-commonjs migration:run -d typeorm-cli.config.ts",
-    "migration:revert": "typeorm-ts-node-commonjs migration:revert -d typeorm-cli.config.ts",
-    "migration:create": "typeorm-ts-node-commonjs migration:create"
+    "database:seed": "cross-env NODE_ENV=development ts-node database/seed.ts",
+    "database:generate": "typeorm-ts-node-commonjs migration:generate -d database/data-source.ts",
+    "database:run": "typeorm-ts-node-commonjs migration:run -d database/data-source.ts",
+    "database:revert": "typeorm-ts-node-commonjs migration:revert -d database/data-source.ts",
+    "database:create": "typeorm-ts-node-commonjs migration:create"
   },
   "dependencies": {
     "@langchain/community": "^0.3.21",

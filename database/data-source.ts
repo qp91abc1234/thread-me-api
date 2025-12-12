@@ -19,6 +19,6 @@ export default new DataSource({
   password: process.env.DB_MYSQL_PASSWORD,
   database: process.env.DB_MYSQL_DATABASE,
   entities: ['src/**/*.entity{.ts,.js}'],
-  migrations: ['src/migrations/*{.ts,.js}'],
+  migrations: ['database/migrations/*{.ts,.js}'],
   synchronize: false,
 });
