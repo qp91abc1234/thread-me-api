@@ -13,6 +13,21 @@ export class RoleService {
     private readonly permissionLogicService: PermissionLogicService,
   ) {}
 
+  private async validatePermissions(permissionIds: number[]) {
+    if (!permissionIds || permissionIds.length === 0) return;
+
+    const permissions =
+      await this.permissionLogicService.findMany(permissionIds);
+
+    if (permissions.length !== permissionIds.length) {
+      const existIds = permissions.map((p) => p.id);
+      const notFoundIds = permissionIds.filter((id) => !existIds.includes(id));
+      throw BusinessExceptions.NO_PERMISSION(
+        `权限ID不存在: ${notFoundIds.join(', ')}`,
+      );
+    }
+  }
+
   async create(createRoleDto: CreateRoleDto) {
     const existRole = await this.roleLogicService.findOne(createRoleDto.name);
     if (existRole) {
@@ -20,21 +35,7 @@ export class RoleService {
     }
 
     // 校验权限是否存在
-    if (createRoleDto.permissionIds?.length > 0) {
-      const permissions = await this.permissionLogicService.findMany(
-        createRoleDto.permissionIds,
-      );
-
-      if (permissions.length !== createRoleDto.permissionIds.length) {
-        const existIds = permissions.map((p) => p.id);
-        const notFoundIds = createRoleDto.permissionIds.filter(
-          (id) => !existIds.includes(id),
-        );
-        throw BusinessExceptions.NO_PERMISSION(
-          `权限ID不存在: ${notFoundIds.join(', ')}`,
-        );
-      }
-    }
+    await this.validatePermissions(createRoleDto.permissionIds);
 
     return this.prisma.role.create({
       data: {
@@ -49,21 +50,29 @@ export class RoleService {
     });
   }
 
-  async findList(page: number, pageSize: number) {
+  async findList(
+    page: number,
+    pageSize: number,
+    options: { permissions?: boolean } = {},
+  ) {
     const skip = (page - 1) * pageSize;
     const [list, total] = await Promise.all([
       this.prisma.role.findMany({
         skip,
         take: pageSize,
         orderBy: { id: 'desc' },
+        include: options.permissions ? { permissions: true } : undefined,
       }),
       this.prisma.role.count(),
     ]);
     return { list, total };
   }
 
-  async findOne(idorname: number | string) {
-    const role = await this.roleLogicService.findOne(idorname);
+  async findOne(
+    idorname: number | string,
+    options: { permissions?: boolean } = {},
+  ) {
+    const role = await this.roleLogicService.findOne(idorname, options);
     if (!role) {
       throw BusinessExceptions.NO_ROLE();
     }
@@ -74,21 +83,7 @@ export class RoleService {
     await this.findOne(updateRoleDto.id);
 
     // 校验权限是否存在
-    if (updateRoleDto.permissionIds?.length > 0) {
-      const permissions = await this.permissionLogicService.findMany(
-        updateRoleDto.permissionIds,
-      );
-
-      if (permissions.length !== updateRoleDto.permissionIds.length) {
-        const existIds = permissions.map((p) => p.id);
-        const notFoundIds = updateRoleDto.permissionIds.filter(
-          (id) => !existIds.includes(id),
-        );
-        throw BusinessExceptions.NO_PERMISSION(
-          `权限ID不存在: ${notFoundIds.join(', ')}`,
-        );
-      }
-    }
+    await this.validatePermissions(updateRoleDto.permissionIds);
 
     return this.prisma.role.update({
       where: { id: updateRoleDto.id },

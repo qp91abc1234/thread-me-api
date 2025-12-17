@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   ParseIntPipe,
+  ParseBoolPipe,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import {
@@ -25,16 +26,19 @@ export class RoleController {
 
   @Post()
   async create(@Body() createRoleDto: CreateRoleDto): Promise<GetRoleVo> {
-    const role = await this.roleService.create(createRoleDto);
-    return role;
+    return await this.roleService.create(createRoleDto);
   }
 
   @Get()
   async findList(
     @Query('page', ParseIntPipe) page: number,
     @Query('pageSize', ParseIntPipe) pageSize: number,
+    @Query('permissions', new ParseBoolPipe({ optional: true }))
+    permissions: boolean = false,
   ): Promise<GetRoleListVo> {
-    const { list, total } = await this.roleService.findList(page, pageSize);
+    const { list, total } = await this.roleService.findList(page, pageSize, {
+      permissions,
+    });
     return {
       list,
       total,
@@ -47,17 +51,17 @@ export class RoleController {
   async findOne(
     @Param('idorname')
     idorname: string,
+    @Query('permissions', new ParseBoolPipe({ optional: true }))
+    permissions: boolean = false,
   ): Promise<GetRoleVo> {
     const parsed = parseInt(idorname, 10);
     const finalValue = isNaN(parsed) ? idorname : parsed;
-    const role = await this.roleService.findOne(finalValue);
-    return role;
+    return await this.roleService.findOne(finalValue, { permissions });
   }
 
   @Patch()
   async update(@Body() updateRoleDto: UpdateRoleDto): Promise<GetRoleVo> {
-    const role = await this.roleService.update(updateRoleDto);
-    return role;
+    return await this.roleService.update(updateRoleDto);
   }
 
   @Delete(':id')

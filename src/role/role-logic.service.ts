@@ -5,16 +5,20 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class RoleLogicService {
   constructor(private readonly prisma: PrismaService) {}
 
-  findMany(ids: number[]) {
+  findMany(ids: number[], options: { permissions?: boolean } = {}) {
+    const permissionsConfig = options.permissions
+      ? { permissions: true }
+      : undefined;
     return this.prisma.role.findMany({
       where: {
         id: { in: ids },
       },
+      include: permissionsConfig,
     });
   }
 
-  findOne(idorname: number | string, includes: { permissions?: boolean } = {}) {
-    const permissionsConfig = includes.permissions
+  findOne(idorname: number | string, options: { permissions?: boolean } = {}) {
+    const permissionsConfig = options.permissions
       ? { permissions: true }
       : undefined;
     return this.prisma.role.findUnique({

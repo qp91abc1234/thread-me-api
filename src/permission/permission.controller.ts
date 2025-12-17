@@ -27,8 +27,7 @@ export class PermissionController {
   async create(
     @Body() createPermissionDto: CreatePermissionDto,
   ): Promise<GetPermissionVo> {
-    const user = await this.permissionService.create(createPermissionDto);
-    return user;
+    return await this.permissionService.create(createPermissionDto);
   }
 
   @Get()
@@ -52,16 +51,14 @@ export class PermissionController {
   async findOne(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<GetPermissionVo> {
-    const permission = await this.permissionService.findOne(id);
-    return permission;
+    return await this.permissionService.findOne(id);
   }
 
   @Patch()
   async update(
     @Body() updatePermissionDto: UpdatePermissionDto,
   ): Promise<GetPermissionVo> {
-    const permission = await this.permissionService.update(updatePermissionDto);
-    return permission;
+    return await this.permissionService.update(updatePermissionDto);
   }
 
   @Delete(':id')
