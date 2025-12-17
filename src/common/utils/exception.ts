@@ -27,16 +27,15 @@ export const BusinessExceptions = {
   NO_ROLE: () =>
     createException({ code: ErrorCode.NO_ROLE, message: '没有对应的角色' }),
 
-  NO_PERMISSION: () =>
+  NO_PERMISSION: (detail?: string) =>
     createException({
       code: ErrorCode.NO_PERMISSION,
-      message: '没有对应的权限',
+      message: detail || '没有对应的权限',
     }),
 
   PWD_ERR: () =>
     createException({ code: ErrorCode.PWD_ERR, message: '密码错误' }),
 
-  // 403 Forbidden
   NO_AUTH: () =>
     createException(
       { code: ErrorCode.NO_AUTH, message: '没有操作权限' },

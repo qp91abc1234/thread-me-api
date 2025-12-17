@@ -24,7 +24,9 @@ export class PermissionController {
   constructor(private readonly permissionService: PermissionService) {}
 
   @Post()
-  async create(@Body() createPermissionDto: CreatePermissionDto) {
+  async create(
+    @Body() createPermissionDto: CreatePermissionDto,
+  ): Promise<GetPermissionVo> {
     const user = await this.permissionService.create(createPermissionDto);
     return user;
   }
@@ -55,7 +57,9 @@ export class PermissionController {
   }
 
   @Patch()
-  async update(@Body() updatePermissionDto: UpdatePermissionDto) {
+  async update(
+    @Body() updatePermissionDto: UpdatePermissionDto,
+  ): Promise<GetPermissionVo> {
     const permission = await this.permissionService.update(updatePermissionDto);
     return permission;
   }

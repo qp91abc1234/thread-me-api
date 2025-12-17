@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import {
@@ -23,16 +24,17 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Post()
-  async create(@Body() createRoleDto: CreateRoleDto) {
-    await this.roleService.create(createRoleDto);
+  async create(@Body() createRoleDto: CreateRoleDto): Promise<GetRoleVo> {
+    const role = await this.roleService.create(createRoleDto);
+    return role;
   }
 
   @Get()
   async findList(
-    @Query('page') page: number,
-    @Query('pageSize') pageSize: number,
+    @Query('page', ParseIntPipe) page: number,
+    @Query('pageSize', ParseIntPipe) pageSize: number,
   ): Promise<GetRoleListVo> {
-    const [list, total] = await this.roleService.findList(page, pageSize);
+    const { list, total } = await this.roleService.findList(page, pageSize);
     return {
       list,
       total,
@@ -41,18 +43,25 @@ export class RoleController {
     };
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<GetRoleVo> {
-    return await this.roleService.findOne(+id);
+  @Get(':idorname')
+  async findOne(
+    @Param('idorname')
+    idorname: string,
+  ): Promise<GetRoleVo> {
+    const parsed = parseInt(idorname, 10);
+    const finalValue = isNaN(parsed) ? idorname : parsed;
+    const role = await this.roleService.findOne(finalValue);
+    return role;
   }
 
   @Patch()
-  async update(@Body() updateRoleDto: UpdateRoleDto) {
-    await this.roleService.update(updateRoleDto);
+  async update(@Body() updateRoleDto: UpdateRoleDto): Promise<GetRoleVo> {
+    const role = await this.roleService.update(updateRoleDto);
+    return role;
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    await this.roleService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.roleService.remove(id);
   }
 }

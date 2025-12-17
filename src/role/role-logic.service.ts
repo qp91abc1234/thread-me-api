@@ -1,27 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
-import { Role } from './entities/role.entity';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class RoleLogicService {
-  @InjectRepository(Role)
-  private roleRepository: Repository<Role>;
+  constructor(private readonly prisma: PrismaService) {}
 
-  async findByIds(ids: number[]) {
-    const roles = await this.roleRepository.find({
+  findMany(ids: number[]) {
+    return this.prisma.role.findMany({
       where: {
-        id: In(ids),
+        id: { in: ids },
       },
     });
-    return roles;
   }
 
-  async findByName(name: string) {
-    return await this.roleRepository.findOne({
-      where: {
-        name,
-      },
+  findOne(idorname: number | string, includes: { permissions?: boolean } = {}) {
+    const permissionsConfig = includes.permissions
+      ? { permissions: true }
+      : undefined;
+    return this.prisma.role.findUnique({
+      where:
+        typeof idorname === 'number' ? { id: idorname } : { name: idorname },
+      include: permissionsConfig,
     });
   }
 }
