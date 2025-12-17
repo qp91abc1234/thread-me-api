@@ -1,19 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Permission } from './entities/permission.entity';
-import { In, Repository } from 'typeorm';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class PermissionLogicService {
-  @InjectRepository(Permission)
-  private permissionRepository: Repository<Permission>;
+  constructor(private readonly prisma: PrismaService) {}
 
-  async findByIds(ids: number[]) {
-    const permissions = await this.permissionRepository.find({
+  findMany(ids: number[]) {
+    return this.prisma.permission.findMany({
       where: {
-        id: In(ids),
+        id: { in: ids },
       },
     });
-    return permissions;
   }
 }

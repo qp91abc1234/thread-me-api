@@ -1,17 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePermissionDto, UpdatePermissionDto } from './dto/permission.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Permission } from './entities/permission.entity';
-import { Repository } from 'typeorm';
 import { BusinessExceptions } from 'src/common/utils/exception';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class PermissionService {
-  @InjectRepository(Permission)
-  private permissionRepository: Repository<Permission>;
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(createPermissionDto: CreatePermissionDto) {
-    const permission = await this.permissionRepository.findOne({
+    const permission = await this.prisma.permission.findUnique({
       where: {
         name: createPermissionDto.name,
       },
@@ -19,21 +16,27 @@ export class PermissionService {
     if (permission) {
       throw BusinessExceptions.EXIST(`权限 ${createPermissionDto.name} `);
     }
-    return this.permissionRepository.save(createPermissionDto);
-  }
-
-  findList(page: number, pageSize: number) {
-    return this.permissionRepository.findAndCount({
-      skip: (page - 1) * pageSize, // 计算跳过的偏移量
-      take: pageSize, // 取多少条
-      order: {
-        id: 'DESC', // 通常分页都要配合排序，否则顺序可能不稳定
-      },
+    return this.prisma.permission.create({
+      data: createPermissionDto,
     });
   }
 
+  findList(page: number, pageSize: number) {
+    const skip = (page - 1) * pageSize;
+    return Promise.all([
+      this.prisma.permission.findMany({
+        skip,
+        take: pageSize,
+        orderBy: {
+          id: 'desc',
+        },
+      }),
+      this.prisma.permission.count(),
+    ]);
+  }
+
   async findOne(id: number) {
-    const permission = await this.permissionRepository.findOne({
+    const permission = await this.prisma.permission.findUnique({
       where: { id },
     });
     if (!permission) {
@@ -43,18 +46,20 @@ export class PermissionService {
   }
 
   async update(updatePermissionDto: UpdatePermissionDto) {
-    const permission = await this.findOne(updatePermissionDto.id);
-    return this.permissionRepository.save({
-      ...permission,
-      ...updatePermissionDto,
+    await this.findOne(updatePermissionDto.id);
+    return this.prisma.permission.update({
+      where: { id: updatePermissionDto.id },
+      data: updatePermissionDto,
     });
   }
 
   async remove(id: number) {
-    const permission = await this.findOne(+id);
+    const permission = await this.findOne(id);
     if (permission.isSystem) {
       throw BusinessExceptions.NO_AUTH();
     }
-    return this.permissionRepository.delete(id);
+    return this.prisma.permission.delete({
+      where: { id },
+    });
   }
 }
