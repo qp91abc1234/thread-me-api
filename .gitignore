@@ -59,4 +59,4 @@ daily-*
 public
 
 data
-/generated/prisma
+/prisma/generated

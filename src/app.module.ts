@@ -8,7 +8,6 @@ import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RespInterceptor } from './common/interceptor/resp.interceptor';
 import { HttpExceptionFilter } from './common/filter/http-exception.filter';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { utilities, WinstonModule } from 'nest-winston';
 import { FileUploadModule } from './file-upload/file-upload.module';
@@ -22,6 +21,7 @@ import { PermissionGuard } from './common/guard/permission.guard';
 import { RedisModule } from './redis/redis.module';
 import { AuthModule } from './auth/auth.module';
 import { LangchainModule } from './langchain/langchain.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
@@ -31,36 +31,11 @@ import { LangchainModule } from './langchain/langchain.module';
     }),
     ConfigModule.forRoot({
       isGlobal: true,
-      // 依次查找：
-      // 1. .env.production.local (本地特定覆盖)
-      // 2. .env.production (你刚才生成的)
-      // 3. .env (通用默认)
       envFilePath: [
         `.env.${process.env.NODE_ENV || 'development'}.local`,
         `.env.${process.env.NODE_ENV || 'development'}`,
         '.env',
       ],
-    }),
-    TypeOrmModule.forRootAsync({
-      useFactory: (config: ConfigService) => {
-        return {
-          type: 'mysql',
-          synchronize: config.get('DB_SYNCHRONIZE') === 'true',
-          logging: true,
-          entities: [`${__dirname}/**/*.entity{.ts,.js}`],
-          poolSize: 10,
-          connectorPackage: 'mysql2',
-          extra: {
-            authPlugins: ['sha256_password'],
-          },
-          host: config.get('DB_MYSQL_HOST'),
-          port: Number(config.get('DB_MYSQL_PORT')),
-          username: config.get('DB_MYSQL_USERNAME'),
-          password: config.get('DB_MYSQL_PASSWORD'),
-          database: config.get('DB_MYSQL_DATABASE'),
-        } as TypeOrmModuleOptions;
-      },
-      inject: [ConfigService],
     }),
     JwtModule.registerAsync({
       global: true,
@@ -96,6 +71,7 @@ import { LangchainModule } from './langchain/langchain.module';
       }),
       inject: [ConfigService],
     }),
+    PrismaModule,
     RedisModule,
     UserModule,
     FileUploadModule,
