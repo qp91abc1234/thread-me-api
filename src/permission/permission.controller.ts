@@ -25,15 +25,19 @@ export class PermissionController {
 
   @Post()
   async create(@Body() createPermissionDto: CreatePermissionDto) {
-    await this.permissionService.create(createPermissionDto);
+    const user = await this.permissionService.create(createPermissionDto);
+    return user;
   }
 
   @Get()
   async findList(
-    @Query('page') page: number,
-    @Query('pageSize') pageSize: number,
+    @Query('page', ParseIntPipe) page: number,
+    @Query('pageSize', ParseIntPipe) pageSize: number,
   ): Promise<GetPermissionListVo> {
-    const [list, total] = await this.permissionService.findList(page, pageSize);
+    const { list, total } = await this.permissionService.findList(
+      page,
+      pageSize,
+    );
     return {
       list,
       total,
@@ -43,14 +47,17 @@ export class PermissionController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<GetPermissionVo> {
-    const permission = await this.permissionService.findOne(+id);
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<GetPermissionVo> {
+    const permission = await this.permissionService.findOne(id);
     return permission;
   }
 
   @Patch()
   async update(@Body() updatePermissionDto: UpdatePermissionDto) {
-    await this.permissionService.update(updatePermissionDto);
+    const permission = await this.permissionService.update(updatePermissionDto);
+    return permission;
   }
 
   @Delete(':id')

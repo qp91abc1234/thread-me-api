@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
 export class CreatePermissionDto {
   @IsNotEmpty()
   @IsString()
@@ -9,6 +9,7 @@ export class CreatePermissionDto {
 
 export class UpdatePermissionDto extends PartialType(CreatePermissionDto) {
   @IsNotEmpty()
+  @IsNumber()
   id: number;
 }
 

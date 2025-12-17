@@ -21,18 +21,17 @@ export class PermissionService {
     });
   }
 
-  findList(page: number, pageSize: number) {
+  async findList(page: number, pageSize: number) {
     const skip = (page - 1) * pageSize;
-    return Promise.all([
+    const [list, total] = await Promise.all([
       this.prisma.permission.findMany({
         skip,
         take: pageSize,
-        orderBy: {
-          id: 'desc',
-        },
+        orderBy: { id: 'desc' },
       }),
       this.prisma.permission.count(),
     ]);
+    return { list, total };
   }
 
   async findOne(id: number) {
