@@ -68,7 +68,7 @@ export class UserService {
   async remove(id: number) {
     const user = await this.userLogicService.findOne(id);
     if (user.isSystem) {
-      throw BusinessExceptions.NO_AUTH();
+      throw BusinessExceptions.OPERATION_FORBIDDEN();
     }
     return this.prisma.user.delete({
       where: { id },

@@ -91,7 +91,7 @@ export class RoleService {
   async remove(id: number) {
     const role = await this.roleLogicService.findOne(id);
     if (role.isSystem) {
-      throw BusinessExceptions.NO_AUTH();
+      throw BusinessExceptions.OPERATION_FORBIDDEN();
     }
     return this.prisma.role.delete({
       where: { id },

@@ -55,7 +55,7 @@ export class PermissionService {
   async remove(id: number) {
     const permission = await this.findOne(id);
     if (permission.isSystem) {
-      throw BusinessExceptions.NO_AUTH();
+      throw BusinessExceptions.OPERATION_FORBIDDEN();
     }
     return this.prisma.permission.delete({
       where: { id },

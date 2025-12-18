@@ -32,9 +32,15 @@ export const BusinessExceptions = {
       HttpStatus.UNAUTHORIZED,
     ),
 
-  UNLOGIN: () =>
+  TOKEN_EXPIRED: () =>
     createException(
-      { code: ErrorCode.UNLOGIN, message: '用户未登录或Token过期' },
+      { code: ErrorCode.TOKEN_EXPIRED, message: 'Token已过期' },
+      HttpStatus.UNAUTHORIZED,
+    ),
+
+  TOKEN_INVALID: () =>
+    createException(
+      { code: ErrorCode.TOKEN_INVALID, message: 'Token无效' },
       HttpStatus.UNAUTHORIZED,
     ),
 
@@ -57,9 +63,12 @@ export const BusinessExceptions = {
       HttpStatus.FORBIDDEN,
     ),
 
-  NO_AUTH: () =>
+  OPERATION_FORBIDDEN: (detail?: string) =>
     createException(
-      { code: ErrorCode.NO_AUTH, message: '没有操作权限' },
+      {
+        code: ErrorCode.OPERATION_FORBIDDEN,
+        message: detail || '没有操作权限',
+      },
       HttpStatus.FORBIDDEN,
     ),
 
