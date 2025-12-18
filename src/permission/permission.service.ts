@@ -8,11 +8,7 @@ export class PermissionService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createPermissionDto: CreatePermissionDto) {
-    const permission = await this.prisma.permission.findUnique({
-      where: {
-        name: createPermissionDto.name,
-      },
-    });
+    const permission = await this.findOne(createPermissionDto.name);
     if (permission) {
       throw BusinessExceptions.EXIST(`权限 ${createPermissionDto.name} `);
     }
@@ -34,9 +30,10 @@ export class PermissionService {
     return { list, total };
   }
 
-  async findOne(id: number) {
+  async findOne(idorname: number | string) {
     const permission = await this.prisma.permission.findUnique({
-      where: { id },
+      where:
+        typeof idorname === 'number' ? { id: idorname } : { name: idorname },
     });
     if (!permission) {
       throw BusinessExceptions.NO_PERMISSION();

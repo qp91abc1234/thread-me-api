@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { BusinessExceptions } from 'src/common/utils/exception';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -17,14 +18,23 @@ export class RoleLogicService {
     });
   }
 
-  findOne(idorname: number | string, options: { permissions?: boolean } = {}) {
+  async findOne(
+    idorname: number | string,
+    options: { permissions?: boolean } = {},
+  ) {
     const permissionsConfig = options.permissions
       ? { permissions: true }
       : undefined;
-    return this.prisma.role.findUnique({
+    const role = await this.prisma.role.findUnique({
       where:
         typeof idorname === 'number' ? { id: idorname } : { name: idorname },
       include: permissionsConfig,
     });
+
+    if (!role) {
+      throw BusinessExceptions.NO_ROLE();
+    }
+
+    return role;
   }
 }

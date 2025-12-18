@@ -68,19 +68,8 @@ export class RoleService {
     return { list, total };
   }
 
-  async findOne(
-    idorname: number | string,
-    options: { permissions?: boolean } = {},
-  ) {
-    const role = await this.roleLogicService.findOne(idorname, options);
-    if (!role) {
-      throw BusinessExceptions.NO_ROLE();
-    }
-    return role;
-  }
-
   async update(updateRoleDto: UpdateRoleDto) {
-    await this.findOne(updateRoleDto.id);
+    await this.roleLogicService.findOne(updateRoleDto.id);
 
     // 校验权限是否存在
     await this.validatePermissions(updateRoleDto.permissionIds);
@@ -100,7 +89,7 @@ export class RoleService {
   }
 
   async remove(id: number) {
-    const role = await this.findOne(id);
+    const role = await this.roleLogicService.findOne(id);
     if (role.isSystem) {
       throw BusinessExceptions.NO_AUTH();
     }

@@ -18,11 +18,15 @@ import {
   UpdateRoleDto,
 } from './dto/role.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { RoleLogicService } from './role-logic.service';
 
 @ApiTags('role')
 @Controller('role')
 export class RoleController {
-  constructor(private readonly roleService: RoleService) {}
+  constructor(
+    private readonly roleService: RoleService,
+    private readonly roleLogicService: RoleLogicService,
+  ) {}
 
   @Post()
   async create(@Body() createRoleDto: CreateRoleDto): Promise<GetRoleVo> {
@@ -47,16 +51,13 @@ export class RoleController {
     };
   }
 
-  @Get(':idorname')
+  @Get(':id')
   async findOne(
-    @Param('idorname')
-    idorname: string,
+    @Param('id', ParseIntPipe) id: number,
     @Query('permissions', new ParseBoolPipe({ optional: true }))
     permissions: boolean = false,
   ): Promise<GetRoleVo> {
-    const parsed = parseInt(idorname, 10);
-    const finalValue = isNaN(parsed) ? idorname : parsed;
-    return await this.roleService.findOne(finalValue, { permissions });
+    return await this.roleLogicService.findOne(id, { permissions });
   }
 
   @Patch()
