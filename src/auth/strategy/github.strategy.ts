@@ -9,6 +9,7 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
     super({
       clientID: configService.get('GITHUB_CLIENT_ID'),
       clientSecret: configService.get('GITHUB_SECRET'),
+      // 此处路径需要与 GitHub → Settings → Developer settings → OAuth Apps 中路径一致
       callbackURL: configService.get('APP_URL') + '/auth/github-callback',
       // 请求访问用户公开资料
       scope: ['read:user'],

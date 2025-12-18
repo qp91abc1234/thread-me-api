@@ -57,7 +57,7 @@ export class UserLogicService {
     password?: string;
     roleIds?: number[];
   }) {
-    const user = await this.findOne(data.username);
+    const user = await this.findOne(data.username, { ignoreNotFound: true });
 
     if (user) {
       throw BusinessExceptions.EXIST(`用户 ${user.username} `);
@@ -94,7 +94,11 @@ export class UserLogicService {
 
   async findOne(
     idorname: number | string,
-    options: { roles?: boolean; permissions?: boolean } = {},
+    options: {
+      roles?: boolean;
+      permissions?: boolean;
+      ignoreNotFound?: boolean;
+    } = {},
   ) {
     const rolesConfig = this.getRolesConfig(options);
 
@@ -110,6 +114,9 @@ export class UserLogicService {
     });
 
     if (!user) {
+      if (options.ignoreNotFound) {
+        return null;
+      }
       throw BusinessExceptions.NO_USER();
     }
 

@@ -19,6 +19,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { AuthLogicService, UserWithRelations } from './auth-logic.service';
+import { GithubAuthGuard } from './guard/github.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -38,20 +39,16 @@ export class AuthController {
   }
 
   @Get('github-login')
-  @UseGuards(AuthGuard('github'))
+  @UseGuards(GithubAuthGuard)
   // eslint-disable-next-line
-  async githubLogin(@Query('state') state: string) {}
+  async githubLogin(@Query('state') _state: string) {}
 
   @Get('github-callback')
   @UseGuards(AuthGuard('github'))
-  async githubAuthCallback(
-    @Query('state') state: string,
-    @Request() req,
-    @Res() res: Response,
-  ) {
+  async githubAuthCallback(@Request() req, @Res() res: Response) {
     const result = await this.authService.githubLogin(req.user);
     res.redirect(
-      `${state}/auth/callback#token=${result.token}&refreshToken=${result.refreshToken}`,
+      `${req.query.state}/auth/callback#token=${result.token}&refreshToken=${result.refreshToken}`,
     );
   }
 
