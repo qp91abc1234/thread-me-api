@@ -16,9 +16,12 @@ export class AuthService {
   ) {}
 
   async githubLogin(profile: Profile) {
-    const user = await this.userLogicService.create({
-      username: profile.username || '',
-    });
+    const user = await this.userLogicService.create(
+      {
+        username: profile.username || '',
+      },
+      { silent: true },
+    );
     return this.authLogicService.sign(user);
   }
 

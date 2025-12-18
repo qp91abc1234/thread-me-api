@@ -30,16 +30,13 @@ export class PermissionService {
     return { list, total };
   }
 
-  async findOne(
-    idorname: number | string,
-    options: { ignoreNotFound?: boolean } = {},
-  ) {
+  async findOne(idorname: number | string, options: { silent?: boolean } = {}) {
     const permission = await this.prisma.permission.findUnique({
       where:
         typeof idorname === 'number' ? { id: idorname } : { name: idorname },
     });
     if (!permission) {
-      if (options.ignoreNotFound) {
+      if (options.silent) {
         return null;
       }
       throw BusinessExceptions.NO_PERMISSION();
