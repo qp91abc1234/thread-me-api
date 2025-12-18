@@ -66,6 +66,6 @@ export class RoleController {
 
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
-    await this.roleService.remove(id);
+    return await this.roleService.remove(id);
   }
 }

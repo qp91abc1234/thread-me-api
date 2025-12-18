@@ -1,11 +1,21 @@
-import { OmitType, PartialType } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, Length } from 'class-validator';
-import { User } from '../entities/user.entity';
-
+import { PartialType } from '@nestjs/swagger';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+  Matches,
+} from 'class-validator';
+import { GetRoleVo } from 'src/role/dto/role.dto';
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   @Length(2, 50)
+  @Matches(/^[a-zA-Z][a-zA-Z0-9._-]*$/, {
+    message: '用户名必须以英文字母开头，可包含字母、数字及符号（. _ -）',
+  })
   username: string;
 
   @IsNotEmpty()
@@ -13,6 +23,9 @@ export class CreateUserDto {
   @Length(6, 100)
   password: string;
 
+  @IsOptional()
+  @IsArray()
+  @IsNumber({}, { each: true })
   roleIds?: number[];
 }
 
@@ -21,8 +34,14 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   id: number;
 }
 
-export class GetUserVo extends OmitType(User, ['password', 'roles']) {}
-
+export class GetUserVo {
+  id: number;
+  username: string;
+  isSystem: boolean;
+  createTime: Date;
+  updateTime: Date;
+  roles?: GetRoleVo[];
+}
 export class GetUserListVo {
   list: GetUserVo[];
   total: number;

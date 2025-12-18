@@ -1,67 +1,102 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
-import { BusinessExceptions } from 'src/common/utils/exception';
-import { Profile } from 'passport-github2';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RoleLogicService } from 'src/role/role-logic.service';
+import { PrismaService } from 'src/prisma/prisma.service';
+import * as bcrypt from 'bcrypt';
+import { BusinessExceptions } from 'src/common/utils/exception';
 
 @Injectable()
 export class UserLogicService {
-  @InjectRepository(User)
-  private userRepository: Repository<User>;
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly configService: ConfigService,
+    private readonly roleLogicService: RoleLogicService,
+  ) {}
 
-  @Inject(RoleLogicService)
-  private roleLogicService: RoleLogicService;
+  readonly omitFields = {
+    password: true,
+  };
 
-  constructor(private readonly configService: ConfigService) {}
-
-  getVisiblePropertyNames() {
-    const propertyNames = this.userRepository.metadata.columns
-      .filter((column) => column.propertyName !== 'password')
-      .map((column) => column.propertyName);
-
-    return propertyNames;
+  async hashPassword(password: string): Promise<string> {
+    if (password && !password.startsWith('$2b$')) {
+      return await bcrypt.hash(password, 10);
+    }
+    return password;
   }
 
-  async findOneWithPermissions(idorname: number | string): Promise<User> {
-    let id, username;
-    if (typeof idorname === 'number') {
-      id = idorname;
+  async validateRoles(roleIds: number[]) {
+    if (!roleIds || roleIds.length === 0) return;
+
+    const roles = await this.roleLogicService.findMany(roleIds);
+
+    if (roles.length !== roleIds.length) {
+      const existIds = roles.map((p) => p.id);
+      const notFoundIds = roleIds.filter((id) => !existIds.includes(id));
+      throw BusinessExceptions.NO_PERMISSION(
+        `角色ID不存在: ${notFoundIds.join(', ')}`,
+      );
+    }
+  }
+
+  async create(data: {
+    username: string;
+    password?: string;
+    roleIds?: number[];
+  }) {
+    const user = await this.findOne(data.username);
+
+    if (user) {
+      throw BusinessExceptions.EXIST(`用户 ${user.username} `);
+    }
+
+    let rolesId: number[];
+    if (data.roleIds && data.roleIds.length > 0) {
+      rolesId = data.roleIds;
+      await this.validateRoles(rolesId);
     } else {
-      username = idorname;
-    }
-    const user = await this.userRepository.findOne({
-      where: { id, username },
-      relations: ['roles', 'roles.permissions'],
-    });
-
-    if (!user) {
-      throw BusinessExceptions.NO_USER();
+      const roleName = this.configService.get('OAUTH_DEFAULT_ROLE_NAME');
+      const defaultRole = await this.roleLogicService.findOne(roleName);
+      rolesId = [defaultRole.id];
     }
 
-    return user;
-  }
+    const password =
+      data.password || this.configService.get('OAUTH_DEFAULT_PASSWORD');
+    const hashedPassword = await this.hashPassword(password);
 
-  async create(profile: Profile) {
-    let user = await this.userRepository.findOne({
-      where: {
-        username: profile.username,
+    return await this.prisma.user.create({
+      data: {
+        ...data,
+        password: hashedPassword,
+        roles: {
+          connect: rolesId.map((id) => ({ id })),
+        },
+      },
+      include: {
+        roles: { include: { permissions: true } },
       },
     });
-    if (user) {
-      return user;
-    }
-    user = new User();
-    user.username = profile.username;
-    user.password = this.configService.get('OAUTH_DEFAULT_PASSWORD');
+  }
 
-    const defaultRole = await this.roleLogicService.findByName('general_user');
-    if (defaultRole) {
-      user.roles = [defaultRole];
-    }
+  findOne(
+    idorname: number | string,
+    options: { roles?: boolean; permissions?: boolean } = {},
+  ) {
+    const rolesConfig =
+      options.permissions || options.roles
+        ? options.permissions
+          ? { include: { permissions: true } }
+          : true
+        : undefined;
 
-    return await this.userRepository.save(user);
+    return this.prisma.user.findUnique({
+      where:
+        typeof idorname === 'number'
+          ? { id: idorname }
+          : { username: idorname },
+      omit: this.omitFields,
+      include: {
+        roles: rolesConfig,
+      },
+    });
   }
 }

@@ -63,6 +63,6 @@ export class PermissionController {
 
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
-    await this.permissionService.remove(id);
+    return await this.permissionService.remove(id);
   }
 }
