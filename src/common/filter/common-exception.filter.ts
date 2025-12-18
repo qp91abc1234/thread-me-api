@@ -8,6 +8,7 @@ import {
 import { Response } from 'express';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
+import { ErrorCode } from '../constant/constant';
 
 @Catch()
 export class CommonExceptionFilter implements ExceptionFilter {
@@ -28,8 +29,8 @@ export class CommonExceptionFilter implements ExceptionFilter {
     // 生产环境返回通用信息，开发环境返回详细信息
     const isDev = process.env.NODE_ENV === 'development';
 
-    response.json({
-      status: HttpStatus.INTERNAL_SERVER_ERROR,
+    response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      code: ErrorCode.SYSTEM_ERROR,
       message: isDev ? exception.message : '服务器内部错误，请稍后重试',
       timestamp: new Date().toISOString(),
     });
