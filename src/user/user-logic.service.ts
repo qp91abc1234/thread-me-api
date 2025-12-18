@@ -92,13 +92,13 @@ export class UserLogicService {
     });
   }
 
-  findOne(
+  async findOne(
     idorname: number | string,
     options: { roles?: boolean; permissions?: boolean } = {},
   ) {
     const rolesConfig = this.getRolesConfig(options);
 
-    return this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where:
         typeof idorname === 'number'
           ? { id: idorname }
@@ -108,5 +108,11 @@ export class UserLogicService {
         roles: rolesConfig,
       },
     });
+
+    if (!user) {
+      throw BusinessExceptions.NO_USER();
+    }
+
+    return user;
   }
 }

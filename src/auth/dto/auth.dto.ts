@@ -1,14 +1,17 @@
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
 
 export class LoginUserDto {
   @IsNotEmpty()
   @IsString()
-  @Length(1, 20)
+  @Length(2, 50)
+  @Matches(/^[a-zA-Z][a-zA-Z0-9._-]*$/, {
+    message: '用户名必须以英文字母开头，可包含字母、数字及符号（. _ -）',
+  })
   username: string;
 
   @IsNotEmpty()
   @IsString()
-  @Length(1, 20)
+  @Length(6, 100)
   password: string;
 }
 

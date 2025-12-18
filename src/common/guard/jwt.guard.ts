@@ -18,6 +18,7 @@ export class JwtGuard extends AuthGuard('jwt') {
     if (!requireLogin) {
       return true;
     }
+
     return super.canActivate(context);
   }
 }

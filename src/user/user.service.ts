@@ -36,19 +36,8 @@ export class UserService {
     return { list, total };
   }
 
-  async findOne(
-    idorname: number | string,
-    options: { roles?: boolean; permissions?: boolean } = {},
-  ) {
-    const user = await this.userLogicService.findOne(idorname, options);
-    if (!user) {
-      throw BusinessExceptions.NO_USER();
-    }
-    return user;
-  }
-
   async update(updateUserDto: UpdateUserDto) {
-    await this.findOne(updateUserDto.id);
+    await this.userLogicService.findOne(updateUserDto.id);
 
     await this.userLogicService.validateRoles(updateUserDto.roleIds);
 
@@ -77,7 +66,7 @@ export class UserService {
   }
 
   async remove(id: number) {
-    const user = await this.findOne(id);
+    const user = await this.userLogicService.findOne(id);
     if (user.isSystem) {
       throw BusinessExceptions.NO_AUTH();
     }

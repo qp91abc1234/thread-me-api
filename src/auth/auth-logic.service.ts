@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { User } from '../user/entities/user.entity';
+import { User, Role, Permission } from '@prisma/client';
+
+export type UserWithRelations = User & {
+  roles?: (Role & { permissions?: Permission[] })[];
+};
 
 @Injectable()
 export class AuthLogicService {
@@ -10,7 +14,7 @@ export class AuthLogicService {
     private readonly configService: ConfigService,
   ) {}
 
-  sign(user: User) {
+  sign(user: UserWithRelations) {
     const permissions = [
       ...new Set(
         user.roles?.flatMap((role) =>
@@ -23,6 +27,7 @@ export class AuthLogicService {
       userId: user.id,
       permissions,
     };
+
     const token = this.jwtService.sign(data, {
       expiresIn:
         this.configService.get('JWT_ACCESS_TOKEN_EXPIRE_TIME') || '30m',

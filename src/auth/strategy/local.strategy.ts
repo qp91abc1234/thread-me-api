@@ -12,7 +12,9 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
   }
 
   async validate(username: string, password: string) {
-    const user = await this.userLogicService.findOneWithPermissions(username);
+    const user = await this.userLogicService.findOne(username, {
+      permissions: true,
+    });
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
       throw BusinessExceptions.PWD_ERR();

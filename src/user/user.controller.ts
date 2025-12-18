@@ -65,7 +65,10 @@ export class UserController {
   ): Promise<GetUserVo> {
     const parsed = parseInt(idorname, 10);
     const finalValue = isNaN(parsed) ? idorname : parsed;
-    return await this.userService.findOne(finalValue, { roles, permissions });
+    return await this.userLogicService.findOne(finalValue, {
+      roles,
+      permissions,
+    });
   }
 
   @Patch()
