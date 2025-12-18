@@ -18,10 +18,16 @@ export class UserLogicService {
   };
 
   async hashPassword(password: string): Promise<string> {
-    if (password && !password.startsWith('$2b$')) {
-      return await bcrypt.hash(password, 10);
+    if (!password) return password;
+
+    // bcrypt hash 格式：$2[abxy]$[cost]$[22字符salt][31字符hash]，总长度60
+    const bcryptRegex = /^\$2[abxy]\$\d{2}\$[./A-Za-z0-9]{53}$/;
+
+    if (bcryptRegex.test(password)) {
+      return password; // 已经是加密的
     }
-    return password;
+
+    return await bcrypt.hash(password, 10);
   }
 
   async validateRoles(roleIds: number[]) {
@@ -36,6 +42,14 @@ export class UserLogicService {
         `角色ID不存在: ${notFoundIds.join(', ')}`,
       );
     }
+  }
+
+  getRolesConfig(options: { roles?: boolean; permissions?: boolean }) {
+    return options.permissions || options.roles
+      ? options.permissions
+        ? { include: { permissions: true } }
+        : true
+      : undefined;
   }
 
   async create(data: {
@@ -71,6 +85,7 @@ export class UserLogicService {
           connect: rolesId.map((id) => ({ id })),
         },
       },
+      omit: this.omitFields,
       include: {
         roles: { include: { permissions: true } },
       },
@@ -81,12 +96,7 @@ export class UserLogicService {
     idorname: number | string,
     options: { roles?: boolean; permissions?: boolean } = {},
   ) {
-    const rolesConfig =
-      options.permissions || options.roles
-        ? options.permissions
-          ? { include: { permissions: true } }
-          : true
-        : undefined;
+    const rolesConfig = this.getRolesConfig(options);
 
     return this.prisma.user.findUnique({
       where:

@@ -18,12 +18,7 @@ export class UserService {
     options: { roles?: boolean; permissions?: boolean } = {},
   ) {
     const skip = (page - 1) * pageSize;
-    const rolesConfig =
-      options.permissions || options.roles
-        ? options.permissions
-          ? { include: { permissions: true } }
-          : true
-        : undefined;
+    const rolesConfig = this.userLogicService.getRolesConfig(options);
 
     const [list, total] = await Promise.all([
       this.prisma.user.findMany({
@@ -88,6 +83,7 @@ export class UserService {
     }
     return this.prisma.user.delete({
       where: { id },
+      omit: this.userLogicService.omitFields,
     });
   }
 }
