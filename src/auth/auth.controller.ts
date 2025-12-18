@@ -31,7 +31,7 @@ export class AuthController {
   @Post('login')
   @UseGuards(AuthGuard('local'))
   async login(
-    @Body() _loginUserDto: LoginUserDto,
+    @Body() loginUserDto: LoginUserDto,
     @Request() req: { user: UserWithRelations },
   ): Promise<LoginUserVo> {
     return await this.authLogicService.sign(req.user);
@@ -39,7 +39,8 @@ export class AuthController {
 
   @Get('github-login')
   @UseGuards(AuthGuard('github'))
-  async githubLogin() {}
+  // eslint-disable-next-line
+  async githubLogin(@Query('state') state: string) {}
 
   @Get('github-callback')
   @UseGuards(AuthGuard('github'))
