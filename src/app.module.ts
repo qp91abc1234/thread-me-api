@@ -22,6 +22,7 @@ import { RedisModule } from './redis/redis.module';
 import { AuthModule } from './auth/auth.module';
 import { LangchainModule } from './langchain/langchain.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { PrismaClientExceptionFilter } from './common/filter/prisma-exception.filter';
 
 @Module({
   imports: [
@@ -107,6 +108,10 @@ import { PrismaModule } from './prisma/prisma.module';
     {
       provide: APP_FILTER,
       useClass: CommonExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: PrismaClientExceptionFilter,
     },
     {
       provide: APP_FILTER,
