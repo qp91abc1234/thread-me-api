@@ -5,10 +5,10 @@ import { AuthGuard } from '@nestjs/passport';
 export class GithubAuthGuard extends AuthGuard('github') {
   getAuthenticateOptions(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    const state = request.query.state; // 从 query 中获取 state
+    const state = request.query.state;
 
     return {
-      state, // 传递给 Passport，Passport 会传递给 GitHub
+      state,
     };
   }
 }

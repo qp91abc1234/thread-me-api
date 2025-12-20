@@ -1,16 +1,12 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
+// 代码生成器配置：根据 model 定义生成 Prisma 客户端代码
 generator client {
-  provider = "prisma-client"
-  output   = "./generated"
+  provider = "prisma-client" // 使用 Prisma Client 生成器
+  output   = "./generated"    // 生成的代码输出目录
 }
 
+// 数据库相关配置
 datasource db {
-  provider = "mysql"
+  provider = "mysql" // 数据库类型：MySQL
 }
 
 model User {
