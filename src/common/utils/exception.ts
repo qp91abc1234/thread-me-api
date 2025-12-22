@@ -1,9 +1,8 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { ErrorCode } from '../constant/constant';
 
 // 定义统一的错误响应接口
 export interface BusinessError {
-  code: ErrorCode;
+  code: string;
   message: string;
 }
 
@@ -19,7 +18,7 @@ export const BusinessExceptions = {
   UNSUPPORT_FILE_TYPE: () =>
     createException(
       {
-        code: ErrorCode.UNSUPPORT_FILE_TYPE,
+        code: 'UNSUPPORT_FILE_TYPE',
         message: '不支持的文件类型',
       },
       HttpStatus.BAD_REQUEST,
@@ -28,26 +27,26 @@ export const BusinessExceptions = {
   // ========== 401 Unauthorized - 认证失败 ==========
   PWD_ERR: () =>
     createException(
-      { code: ErrorCode.PWD_ERR, message: '密码错误' },
+      { code: 'PWD_ERR', message: '密码错误' },
       HttpStatus.UNAUTHORIZED,
     ),
 
   TOKEN_EXPIRED: () =>
     createException(
-      { code: ErrorCode.TOKEN_EXPIRED, message: 'Token已过期' },
+      { code: 'TOKEN_EXPIRED', message: 'Token已过期' },
       HttpStatus.UNAUTHORIZED,
     ),
 
   TOKEN_INVALID: () =>
     createException(
-      { code: ErrorCode.TOKEN_INVALID, message: 'Token无效' },
+      { code: 'TOKEN_INVALID', message: 'Token无效' },
       HttpStatus.UNAUTHORIZED,
     ),
 
   TOKEN_REUSED: () =>
     createException(
       {
-        code: ErrorCode.TOKEN_REUSED,
+        code: 'TOKEN_REUSED',
         message: 'token 被重复使用',
       },
       HttpStatus.UNAUTHORIZED,
@@ -58,7 +57,7 @@ export const BusinessExceptions = {
   OPERATION_FORBIDDEN: (detail?: string) =>
     createException(
       {
-        code: ErrorCode.OPERATION_FORBIDDEN,
+        code: 'OPERATION_FORBIDDEN',
         message: detail || '缺少操作权限',
       },
       HttpStatus.FORBIDDEN,
@@ -67,20 +66,20 @@ export const BusinessExceptions = {
   // ========== 404 Not Found - 资源不存在 ==========
   NO_USER: () =>
     createException(
-      { code: ErrorCode.NO_USER, message: '没有对应的用户' },
+      { code: 'NO_USER', message: '没有对应的用户' },
       HttpStatus.NOT_FOUND,
     ),
 
   NO_ROLE: (detail?: string) =>
     createException(
-      { code: ErrorCode.NO_ROLE, message: detail || '没有对应的角色' },
+      { code: 'NO_ROLE', message: detail || '没有对应的角色' },
       HttpStatus.NOT_FOUND,
     ),
 
   NO_PERMISSION: (detail?: string) =>
     createException(
       {
-        code: ErrorCode.NO_PERMISSION,
+        code: 'NO_PERMISSION',
         message: detail || '没有对应的权限',
       },
       HttpStatus.NOT_FOUND,
@@ -90,7 +89,7 @@ export const BusinessExceptions = {
   EXIST: (name: string) =>
     createException(
       {
-        code: ErrorCode.EXIST,
+        code: 'EXIST',
         message: `${name}已存在，无法创建`,
       },
       HttpStatus.CONFLICT,

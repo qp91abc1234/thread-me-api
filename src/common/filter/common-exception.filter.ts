@@ -8,7 +8,6 @@ import {
 import { Response } from 'express';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
-import { ErrorCode } from '../constant/constant';
 
 @Catch()
 export class CommonExceptionFilter implements ExceptionFilter {
@@ -26,7 +25,7 @@ export class CommonExceptionFilter implements ExceptionFilter {
     const message = '服务器内部错误，请稍后重试';
 
     const errorBody = {
-      code: ErrorCode.SYSTEM_ERROR,
+      code: 'SYSTEM_ERROR',
       message: exception.message,
       timestamp: new Date().toISOString(),
     };

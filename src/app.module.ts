@@ -5,6 +5,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { UserModule } from './user/user.module';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RespInterceptor } from './common/interceptor/resp.interceptor';
 import { HttpExceptionFilter } from './common/filter/http-exception.filter';
@@ -23,6 +24,9 @@ import { AuthModule } from './auth/auth.module';
 import { LangchainModule } from './langchain/langchain.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { PrismaClientExceptionFilter } from './common/filter/prisma-exception.filter';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerStorageModule } from './throttler-storage/throttler-storage.module';
+import { ThrottlerStorageService } from './throttler-storage/throttler-storage.service';
 
 @Module({
   imports: [
@@ -72,18 +76,39 @@ import { PrismaClientExceptionFilter } from './common/filter/prisma-exception.fi
       }),
       inject: [ConfigService],
     }),
+    ThrottlerModule.forRootAsync({
+      imports: [ThrottlerStorageModule],
+      inject: [ConfigService, ThrottlerStorageService],
+      useFactory: (
+        config: ConfigService,
+        storage: ThrottlerStorageService,
+      ) => ({
+        throttlers: [
+          {
+            ttl: config.get('THROTTLE_TTL', 60) * 1000, // 时间窗口（毫秒）
+            limit: config.get('THROTTLE_LIMIT', 100), // 限制次数
+          },
+        ],
+        storage,
+      }),
+    }),
     PrismaModule,
     RedisModule,
+    ThrottlerStorageModule,
     UserModule,
-    FileUploadModule,
-    PermissionModule,
     RoleModule,
+    PermissionModule,
     AuthModule,
+    FileUploadModule,
     LangchainModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: JwtGuard,
