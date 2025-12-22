@@ -6,7 +6,10 @@
     "spec": false
   },
   "compilerOptions": {
-    "assets": ["**/*.yml"],
+    "assets": [ {
+      "include": "../public/**/*",
+      "outDir": "dist/public"
+    }],
     "watchAssets": true,
     "deleteOutDir": true,
     "plugins": [{"name":"@nestjs/swagger", "options": {

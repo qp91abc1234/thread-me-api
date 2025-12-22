@@ -10,15 +10,12 @@ import {
 } from '@nestjs/common';
 import { FileUploadService } from './file-upload.service';
 import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
-import { storage } from './common/storage';
-import { BusinessExceptions } from '../common/utils/exception';
 import { ConfigService } from '@nestjs/config';
-import { allowFileType, maxFileSize } from './common/constant';
 import * as OSS from 'ali-oss';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import * as fs from 'fs';
-import { uploadDest } from './common/constant';
-import { OssInfoVo } from './vo/file-upload.dto';
+import { OssInfoVo, UploadFilesDto } from './vo/file-upload.dto';
+import { multerOptions, storage, uploadDest } from './common/config';
 
 @ApiTags('file-upload')
 @Controller('file-upload')
@@ -40,22 +37,12 @@ export class FileUploadController {
   }
 
   @Post('uploadFiles')
-  @UseInterceptors(
-    AnyFilesInterceptor({
-      storage: storage,
-      limits: {
-        fileSize: maxFileSize,
-      },
-      fileFilter(req, file, cb) {
-        if (!file.mimetype.match(allowFileType)) {
-          cb(BusinessExceptions.UNSUPPORT_FILE_TYPE(), false);
-        } else {
-          cb(null, true);
-        }
-      },
-    }),
-  )
-  uploadFiles(@UploadedFiles() files: Array<Express.Multer.File>) {
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(AnyFilesInterceptor(multerOptions))
+  uploadFiles(
+    @Body() body: UploadFilesDto,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
     const fileUrls = files.map((val) => `${this.uploadBaseUrl}${val.filename}`);
     return fileUrls;
   }
