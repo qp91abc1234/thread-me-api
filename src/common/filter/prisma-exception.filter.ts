@@ -39,10 +39,9 @@ export class PrismaClientExceptionFilter implements ExceptionFilter {
     }
 
     // 3. 构建响应数据
-    const isDev = process.env.NODE_ENV === 'development';
     const errorBody = {
       code: exception.code,
-      message: isDev ? exception.message : message,
+      message: exception.message,
       timestamp: new Date().toISOString(),
     };
 
@@ -52,6 +51,8 @@ export class PrismaClientExceptionFilter implements ExceptionFilter {
     );
 
     // 5. 发送响应
+    const isDev = process.env.NODE_ENV === 'development';
+    errorBody.message = isDev ? errorBody.message : message;
     response.status(httpStatus).json(errorBody);
   }
 }

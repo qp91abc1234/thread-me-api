@@ -22,17 +22,21 @@ export class CommonExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
+    const httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+    const message = '服务器内部错误，请稍后重试';
+
+    const errorBody = {
+      code: ErrorCode.SYSTEM_ERROR,
+      message: exception.message,
+      timestamp: new Date().toISOString(),
+    };
+
     this.logger.error(
-      `[${request.method}] ${request.url}: ${exception.message}`,
+      `[${request.method}] ${request.url} [${httpStatus}]: ${JSON.stringify(errorBody)}`,
     );
 
-    // 生产环境返回通用信息，开发环境返回详细信息
     const isDev = process.env.NODE_ENV === 'development';
-
-    response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-      code: ErrorCode.SYSTEM_ERROR,
-      message: isDev ? exception.message : '服务器内部错误，请稍后重试',
-      timestamp: new Date().toISOString(),
-    });
+    errorBody.message = isDev ? errorBody.message : message;
+    response.status(httpStatus).json(errorBody);
   }
 }

@@ -21,13 +21,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const exceptionResponse = exception.getResponse();
     const request = ctx.getRequest<Request>();
-    const httpStatus = exception.getStatus();
 
-    // 1. 构建响应数据
+    const httpStatus = exception.getStatus();
+    const message = '请求处理失败，请稍后重试';
+
     const res = exceptionResponse as any; // 临时断言方便取值
     const errorBody = {
       code: res?.code || ErrorCode.HTTP_ERROR,
-      message: res?.message || res || '请求处理失败', // 优先取结构化消息，其次取本身，最后兜底
+      message: res?.message || res || message, // 优先取结构化消息，其次取本身，最后兜底
       timestamp: new Date().toISOString(),
     };
 
@@ -37,6 +38,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
     );
 
     // 3. 发送响应（HTTP 状态码在响应头中）
+    const isDev = process.env.NODE_ENV === 'development';
+    errorBody.message = isDev ? errorBody.message : res?.message || message;
     response.status(httpStatus).json(errorBody);
   }
 }

@@ -4,7 +4,7 @@ import { METADATA_KEY } from '../constant/constant';
 
 export const RequireLogin = () =>
   applyDecorators(
-    ApiBearerAuth(),
+    ApiBearerAuth(), // 在 Swagger 文档中标注接口需要 Bearer Token 认证
     SetMetadata(METADATA_KEY.REQUIRE_LOGIN, true),
   );
 
