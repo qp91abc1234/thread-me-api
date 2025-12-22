@@ -26,14 +26,15 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string) {
-    const data = this.jwtService.verify(refreshToken);
     const isUsed = await this.redisService.get(`used:${refreshToken}`);
     if (isUsed) {
       throw BusinessExceptions.TOKEN_REUSED();
     }
 
-    const user = await this.userLogicService.findOne(data.userId);
-
+    const data = this.jwtService.verify(refreshToken);
+    const user = await this.userLogicService.findOne(data.userId, {
+      permissions: true,
+    });
     const remainingSeconds = data.exp - Math.floor(Date.now() / 1000);
 
     await this.redisService.set(`used:${refreshToken}`, '1', remainingSeconds);

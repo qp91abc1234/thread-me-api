@@ -46,9 +46,11 @@ export class AuthController {
   @Get('github-callback')
   @UseGuards(AuthGuard('github'))
   async githubAuthCallback(@Request() req, @Res() res: Response) {
-    const result = await this.authService.githubLogin(req.user);
+    const { token, refreshToken } = await this.authService.githubLogin(
+      req.user,
+    );
     res.redirect(
-      `${req.query.state}/auth/callback#token=${result.token}&refreshToken=${result.refreshToken}`,
+      `${req.query.state}/auth/callback#token=${token}&refreshToken=${refreshToken}`,
     );
   }
 
