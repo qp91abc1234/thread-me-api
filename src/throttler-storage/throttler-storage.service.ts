@@ -2,13 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ThrottlerStorage } from '@nestjs/throttler';
 import { RedisService } from '../redis/redis.service';
 
-interface ThrottlerStorageRecord {
-  totalHits: number;
-  isBlocked: boolean;
-  timeToExpire: number;
-  timeToBlockExpire: number;
-}
-
 /**
  * Throttler 存储服务
  * Redis 存储适配器，用于 Throttler 限流
@@ -30,12 +23,18 @@ export class ThrottlerStorageService implements ThrottlerStorage {
 
   /**
    * 增加限流计数并返回限流状态
-   * @param key 限流键
+   * @param key 限流键，ex.throttler:default:IP
    * @param ttl 时间窗口（毫秒）
    * @param limit 限制次数
-   * @param blockDuration 阻塞时长（毫秒）
-   * @param throttlerName 限流规则名称
-   * @returns 限流记录，包含总次数、是否被阻塞等信息
+   * @param blockDuration 阻塞时长（毫秒）：当请求超过限制时，额外阻塞的时间
+   * @param throttlerName 限流规则名称，ex.default
+   * @returns
+   * {
+   *   totalHits: number; // 时间窗口内的请求次数
+   *   isBlocked: boolean; // 是否被阻塞（超过限制次数）
+   *   timeToExpire: number; // 最早的有效记录过期时间（秒），过期后计数会减少
+   *   timeToBlockExpire: number; // 阻塞剩余时间（秒），阻塞期间如有新请求，阻塞时间会重置
+   * }
    */
   async increment(
     key: string,
@@ -43,8 +42,8 @@ export class ThrottlerStorageService implements ThrottlerStorage {
     limit: number,
     blockDuration: number,
     // eslint-disable-next-line
-    throttlerName: string, // 限流规则名称
-  ): Promise<ThrottlerStorageRecord> {
+    throttlerName: string,
+  ) {
     const records = await this.getRecord(key);
     const now = Date.now();
     const ttlMs = ttl * 1000;

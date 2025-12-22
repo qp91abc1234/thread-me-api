@@ -16,7 +16,6 @@ import {
 } from './dto/auth.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { AuthLogicService, UserWithRelations } from './auth-logic.service';
@@ -31,7 +30,6 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  @Throttle({ default: { limit: 5, ttl: 60000 } }) // 1分钟内最多5次登录尝试
   @UseGuards(AuthGuard('local'))
   async login(
     @Body() loginUserDto: LoginUserDto,
