@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { BusinessExceptions } from 'src/common/utils/exception';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { BusinessExceptions } from '../../common/utils/exception';
+import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 
 @Injectable()
 export class RoleLogicService {

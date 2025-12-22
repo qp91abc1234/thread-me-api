@@ -8,7 +8,7 @@ import {
   Length,
   Matches,
 } from 'class-validator';
-import { GetPermissionVo } from 'src/permission/dto/permission.dto';
+import { GetPermissionVo } from '../../permission/dto/permission.dto';
 
 export class CreateRoleDto {
   @IsNotEmpty()

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { RoleLogicService } from 'src/role/role-logic.service';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { RoleLogicService } from '../role/role-logic.service';
+import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { BusinessExceptions } from 'src/common/utils/exception';
+import { BusinessExceptions } from '../../common/utils/exception';
 
 @Injectable()
 export class UserLogicService {

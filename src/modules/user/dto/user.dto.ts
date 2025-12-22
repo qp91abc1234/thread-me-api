@@ -8,7 +8,7 @@ import {
   Length,
   Matches,
 } from 'class-validator';
-import { GetRoleVo } from 'src/role/dto/role.dto';
+import { GetRoleVo } from '../../role/dto/role.dto';
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()

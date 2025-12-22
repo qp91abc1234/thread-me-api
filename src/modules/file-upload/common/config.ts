@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as multer from 'multer';
 import * as fs from 'fs';
-import { BusinessExceptions } from 'src/common/utils/exception';
+import { BusinessExceptions } from '../../../common/utils/exception';
 
 export const uploadDest = path.join(__dirname, '../../../public/upload/');
 export const maxFileSize = 1024 * 1024 * 1; // 1 MB

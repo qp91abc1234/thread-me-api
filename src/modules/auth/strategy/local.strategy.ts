@@ -1,8 +1,8 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { BusinessExceptions } from 'src/common/utils/exception';
-import { UserLogicService } from 'src/user/user-logic.service';
+import { BusinessExceptions } from '../../../common/utils/exception';
+import { UserLogicService } from '../../user/user-logic.service';
 import * as bcrypt from 'bcrypt';
 
 /**

@@ -2,7 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { Global, Module } from '@nestjs/common';
 import { RedisService } from './redis.service';
 import { createClient } from 'redis';
-import { PROVIDE_KEY } from 'src/common/constant/constant';
+import { PROVIDE_KEY } from '../../common/constant/constant';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 
