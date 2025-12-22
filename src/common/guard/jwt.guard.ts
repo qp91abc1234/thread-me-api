@@ -23,6 +23,13 @@ export class JwtGuard extends AuthGuard('jwt') {
     return super.canActivate(context);
   }
 
+  /**
+   * JWT 验证结果处理函数
+   *
+   * 在守卫校验完成后、进入下一步（控制器方法）之前被调用，用于统一处理验证结果：
+   * - 验证成功：返回用户对象，继续执行后续流程
+   * - 验证失败：根据错误类型抛出相应的业务异常
+   */
   handleRequest(err: any, user: any, info: any) {
     // Token 过期 - 前端可以续签
     if (info?.name === 'TokenExpiredError') {

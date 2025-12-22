@@ -23,7 +23,7 @@ export class RoleService {
       const existIds = permissions.map((p) => p.id);
       const notFoundIds = permissionIds.filter((id) => !existIds.includes(id));
       throw BusinessExceptions.NO_PERMISSION(
-        `权限ID不存在: ${notFoundIds.join(', ')}`,
+        `没有对应的权限: ${notFoundIds.join(', ')}`,
       );
     }
   }

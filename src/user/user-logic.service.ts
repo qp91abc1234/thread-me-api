@@ -38,8 +38,8 @@ export class UserLogicService {
     if (roles.length !== roleIds.length) {
       const existIds = roles.map((p) => p.id);
       const notFoundIds = roleIds.filter((id) => !existIds.includes(id));
-      throw BusinessExceptions.NO_PERMISSION(
-        `角色ID不存在: ${notFoundIds.join(', ')}`,
+      throw BusinessExceptions.NO_ROLE(
+        `没有对应的角色: ${notFoundIds.join(', ')}`,
       );
     }
   }

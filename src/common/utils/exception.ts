@@ -54,20 +54,12 @@ export const BusinessExceptions = {
     ),
 
   // ========== 403 Forbidden - 权限不足 ==========
-  NO_PERMISSION: (detail?: string) =>
-    createException(
-      {
-        code: ErrorCode.NO_PERMISSION,
-        message: detail || '没有对应的权限',
-      },
-      HttpStatus.FORBIDDEN,
-    ),
 
   OPERATION_FORBIDDEN: (detail?: string) =>
     createException(
       {
         code: ErrorCode.OPERATION_FORBIDDEN,
-        message: detail || '没有操作权限',
+        message: detail || '缺少操作权限',
       },
       HttpStatus.FORBIDDEN,
     ),
@@ -79,9 +71,18 @@ export const BusinessExceptions = {
       HttpStatus.NOT_FOUND,
     ),
 
-  NO_ROLE: () =>
+  NO_ROLE: (detail?: string) =>
     createException(
-      { code: ErrorCode.NO_ROLE, message: '没有对应的角色' },
+      { code: ErrorCode.NO_ROLE, message: detail || '没有对应的角色' },
+      HttpStatus.NOT_FOUND,
+    ),
+
+  NO_PERMISSION: (detail?: string) =>
+    createException(
+      {
+        code: ErrorCode.NO_PERMISSION,
+        message: detail || '没有对应的权限',
+      },
       HttpStatus.NOT_FOUND,
     ),
 

@@ -21,12 +21,12 @@ export enum ErrorCode {
   TOKEN_REUSED = 'TOKEN_REUSED',
 
   // ========== 403 Forbidden - 权限不足 ==========
-  NO_PERMISSION = 'NO_PERMISSION',
   OPERATION_FORBIDDEN = 'OPERATION_FORBIDDEN',
 
   // ========== 404 Not Found - 资源不存在 ==========
   NO_USER = 'NO_USER',
   NO_ROLE = 'NO_ROLE',
+  NO_PERMISSION = 'NO_PERMISSION',
 
   // ========== 409 Conflict - 资源冲突 ==========
   EXIST = 'EXIST',

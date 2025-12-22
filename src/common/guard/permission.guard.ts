@@ -34,7 +34,9 @@ export class PermissionGuard implements CanActivate {
       const curPermission = requiredPermissions[i];
       const found = permissions.find((item) => item === curPermission);
       if (!found) {
-        throw BusinessExceptions.NO_PERMISSION(`缺少 ${curPermission} 权限`);
+        throw BusinessExceptions.OPERATION_FORBIDDEN(
+          `缺少 ${curPermission} 权限`,
+        );
       }
     }
   }
