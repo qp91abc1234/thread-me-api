@@ -30,15 +30,12 @@ export class PermissionService {
     return { list, total };
   }
 
-  async findOne(idorname: number | string, options: { silent?: boolean } = {}) {
+  async findOne(idorname: number | string) {
     const permission = await this.prisma.permission.findUnique({
       where:
         typeof idorname === 'number' ? { id: idorname } : { name: idorname },
     });
     if (!permission) {
-      if (options.silent) {
-        return null;
-      }
       throw BusinessExceptions.NO_PERMISSION();
     }
     return permission;

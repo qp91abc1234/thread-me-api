@@ -20,7 +20,7 @@ export class AuthService {
       {
         username: profile.username || '',
       },
-      { silent: true },
+      { skipThrow: true },
     );
     return this.authLogicService.sign(user);
   }

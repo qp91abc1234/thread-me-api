@@ -20,7 +20,7 @@ export class RoleLogicService {
 
   async findOne(
     idorname: number | string,
-    options: { permissions?: boolean; silent?: boolean } = {},
+    options: { permissions?: boolean } = {},
   ) {
     const permissionsConfig = options.permissions
       ? { permissions: true }
@@ -32,9 +32,6 @@ export class RoleLogicService {
     });
 
     if (!role) {
-      if (options.silent) {
-        return null;
-      }
       throw BusinessExceptions.NO_ROLE();
     }
 

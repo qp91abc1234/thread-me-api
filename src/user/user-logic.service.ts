@@ -58,12 +58,12 @@ export class UserLogicService {
       password?: string;
       roleIds?: number[];
     },
-    options: { silent?: boolean } = {},
+    options: { skipThrow?: boolean } = {},
   ) {
-    const user = await this.findOne(data.username, { silent: true });
+    const user = await this.findOne(data.username, { skipThrow: true });
 
     if (user) {
-      if (options.silent) {
+      if (options.skipThrow) {
         return user;
       }
       throw BusinessExceptions.EXIST(`用户 ${user.username} `);
@@ -103,7 +103,7 @@ export class UserLogicService {
     options: {
       roles?: boolean;
       permissions?: boolean;
-      silent?: boolean;
+      skipThrow?: boolean;
     } = {},
   ) {
     const rolesConfig = this.getRolesConfig(options);
@@ -120,7 +120,7 @@ export class UserLogicService {
     });
 
     if (!user) {
-      if (options.silent) {
+      if (options.skipThrow) {
         return null;
       }
       throw BusinessExceptions.NO_USER();
