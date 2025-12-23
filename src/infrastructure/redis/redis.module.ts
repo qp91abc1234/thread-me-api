@@ -5,7 +5,7 @@ import { createClient } from 'redis';
 import { PROVIDE_KEY } from '../../common/constant/constant';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
-import { InitializationExceptions } from '../../common/utils/exception/initialization.exception';
+import { SystemExceptions } from '../../common/utils/exception/system.exception';
 
 @Global()
 @Module({
@@ -20,15 +20,15 @@ import { InitializationExceptions } from '../../common/utils/exception/initializ
         const password = configService.get<string>('REDIS_PASSWORD');
 
         if (!host) {
-          throw InitializationExceptions.REDIS_HOST_REQUIRED();
+          throw SystemExceptions.REDIS_HOST_REQUIRED();
         }
         if (!port) {
-          throw InitializationExceptions.REDIS_PORT_REQUIRED();
+          throw SystemExceptions.REDIS_PORT_REQUIRED();
         }
 
         const portNumber = Number(port);
         if (isNaN(portNumber) || portNumber < 1 || portNumber > 65535) {
-          throw InitializationExceptions.REDIS_PORT_INVALID(port);
+          throw SystemExceptions.REDIS_PORT_INVALID(port);
         }
 
         const client = createClient({
@@ -39,7 +39,7 @@ import { InitializationExceptions } from '../../common/utils/exception/initializ
               if (retries > 10) {
                 logger.error('[RedisModule] Max reconnection attempts reached');
                 // 返回 Error 对象让 redis 客户端停止重连（非抛出异常，不会被异常过滤器接收）
-                return new Error('Max reconnection attempts reached');
+                return SystemExceptions.REDIS_MAX_RECONNECTION_ATTEMPTS_REACHED();
               }
               const delay = Math.min(retries * 100, 3000);
               logger.warn(
@@ -75,7 +75,7 @@ import { InitializationExceptions } from '../../common/utils/exception/initializ
           logger.error(
             `[RedisModule] Failed to connect to Redis: ${error.message}`,
           );
-          throw InitializationExceptions.REDIS_CONNECTION_FAILED(error.message);
+          throw SystemExceptions.REDIS_CONNECTION_FAILED(error.message);
         }
 
         return client;

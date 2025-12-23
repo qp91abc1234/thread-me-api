@@ -16,11 +16,10 @@ export class RedisService implements OnModuleDestroy {
   ) {}
 
   // 优雅关闭
-  async onModuleDestroy() {
-    // node-redis v4+ 使用 isReady 检查连接状态，如果已断开则忽略错误
-    if (this.redisClient.isReady) {
-      await this.redisClient.disconnect();
-    }
+  onModuleDestroy() {
+    this.redisClient.disconnect().catch(() => {
+      // 忽略断开连接时的错误（可能已经断开）
+    });
   }
 
   /**
