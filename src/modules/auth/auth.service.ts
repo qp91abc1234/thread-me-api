@@ -37,7 +37,9 @@ export class AuthService {
     });
     const remainingSeconds = data.exp - Math.floor(Date.now() / 1000);
 
-    await this.redisService.set(`used:${refreshToken}`, '1', remainingSeconds);
+    await this.redisService.set(`used:${refreshToken}`, '1', {
+      ttl: remainingSeconds,
+    });
     return this.authLogicService.sign(user);
   }
 }

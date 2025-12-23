@@ -12,16 +12,6 @@ export class ThrottlerStorageService implements ThrottlerStorage {
   constructor(private readonly redisService: RedisService) {}
 
   /**
-   * 从 Redis 获取限流记录
-   * @param key 限流键（通常基于 IP 或用户 ID）
-   * @returns 时间戳数组，表示每次请求的时间
-   */
-  private async getRecord(key: string): Promise<number[]> {
-    const value = await this.redisService.get(key);
-    return value ? JSON.parse(value) : [];
-  }
-
-  /**
    * 增加限流计数并返回限流状态
    * @param key 限流键，ex.throttler:default:IP
    * @param ttl 时间窗口（毫秒）
@@ -44,9 +34,12 @@ export class ThrottlerStorageService implements ThrottlerStorage {
     // eslint-disable-next-line
     throttlerName: string,
   ) {
-    const records = await this.getRecord(key);
     const now = Date.now();
     const ttlMs = ttl * 1000;
+    let records: number[] = await this.redisService.get<number[]>(key);
+    if (!records) {
+      records = [];
+    }
 
     // 过滤掉过期的记录（只保留时间窗口内的记录）
     const validRecords = records.filter((timestamp) => timestamp > now - ttlMs);
@@ -57,7 +50,10 @@ export class ThrottlerStorageService implements ThrottlerStorage {
 
     // 添加当前请求时间戳并保存到 Redis
     validRecords.push(now);
-    await this.redisService.set(key, JSON.stringify(validRecords), ttl);
+    // 直接传入数组，RedisService 会自动序列化
+    await this.redisService.set(key, validRecords, {
+      ttl: Math.ceil(ttl / 1000), // ttl 是毫秒，转换为秒
+    });
 
     // 计算过期时间（基于最早的有效记录）
     const earliestRecord = validRecords[0] || now;
