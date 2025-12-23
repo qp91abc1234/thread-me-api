@@ -26,6 +26,10 @@ import { SystemExceptions } from '../../common/utils/exception/system.exception'
           throw SystemExceptions.REDIS_PORT_REQUIRED();
         }
 
+        if (!password) {
+          throw SystemExceptions.REDIS_PASSWORD_REQUIRED();
+        }
+
         const portNumber = Number(port);
         if (isNaN(portNumber) || portNumber < 1 || portNumber > 65535) {
           throw SystemExceptions.REDIS_PORT_INVALID(port);
@@ -48,7 +52,7 @@ import { SystemExceptions } from '../../common/utils/exception/system.exception'
               return delay;
             },
           },
-          password: password || undefined,
+          password,
           database: configService.get('REDIS_DB')
             ? Number(configService.get('REDIS_DB'))
             : 0,

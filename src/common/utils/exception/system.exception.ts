@@ -24,6 +24,9 @@ export const SystemExceptions = {
       `[RedisModule] REDIS_PORT must be a valid port number (1-65535), got: ${port}`,
     ),
 
+  REDIS_PASSWORD_REQUIRED: () =>
+    new SystemException('[RedisModule] REDIS_PASSWORD is required'),
+
   REDIS_CONNECTION_FAILED: (message: string) =>
     new SystemException(`[RedisModule] Redis connection failed: ${message}`),
 
