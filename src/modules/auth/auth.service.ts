@@ -4,7 +4,7 @@ import { AuthLogicService } from './auth-logic.service';
 import { UserLogicService } from '../user/user-logic.service';
 import { Profile } from 'passport-github2';
 import { RedisService } from '../../infrastructure/redis/redis.service';
-import { BusinessExceptions } from '../../common/utils/exception';
+import { BusinessExceptions } from '../../common/utils/exception/business.exception';
 
 @Injectable()
 export class AuthService {

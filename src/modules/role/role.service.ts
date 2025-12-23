@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateRoleDto, UpdateRoleDto } from './dto/role.dto';
-import { BusinessExceptions } from '../../common/utils/exception';
+import { BusinessExceptions } from '../../common/utils/exception/business.exception';
 import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 import { RoleLogicService } from './role-logic.service';
 import { PermissionLogicService } from '../permission/permission-logic.service';

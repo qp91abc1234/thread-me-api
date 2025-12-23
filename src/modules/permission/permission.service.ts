@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePermissionDto, UpdatePermissionDto } from './dto/permission.dto';
-import { BusinessExceptions } from '../../common/utils/exception';
+import { BusinessExceptions } from '../../common/utils/exception/business.exception';
 import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 
 @Injectable()

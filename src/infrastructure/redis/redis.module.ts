@@ -5,6 +5,7 @@ import { createClient } from 'redis';
 import { PROVIDE_KEY } from '../../common/constant/constant';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
+import { InitializationExceptions } from '../../common/utils/exception/initialization.exception';
 
 @Global()
 @Module({
@@ -13,10 +14,27 @@ import { Logger } from 'winston';
     {
       provide: PROVIDE_KEY.REDIS_CLIENT,
       async useFactory(configService: ConfigService, logger: Logger) {
+        // 配置验证
+        const host = configService.get<string>('REDIS_HOST');
+        const port = configService.get<string>('REDIS_PORT');
+        const password = configService.get<string>('REDIS_PASSWORD');
+
+        if (!host) {
+          throw InitializationExceptions.REDIS_HOST_REQUIRED();
+        }
+        if (!port) {
+          throw InitializationExceptions.REDIS_PORT_REQUIRED();
+        }
+
+        const portNumber = Number(port);
+        if (isNaN(portNumber) || portNumber < 1 || portNumber > 65535) {
+          throw InitializationExceptions.REDIS_PORT_INVALID(port);
+        }
+
         const client = createClient({
           socket: {
-            host: configService.get('REDIS_HOST'),
-            port: Number(configService.get('REDIS_PORT')),
+            host,
+            port: portNumber,
             reconnectStrategy: (retries) => {
               if (retries > 10) {
                 logger.error('[RedisModule] Max reconnection attempts reached');
@@ -30,7 +48,7 @@ import { Logger } from 'winston';
               return delay;
             },
           },
-          password: configService.get('REDIS_PASSWORD'),
+          password: password || undefined,
           database: configService.get('REDIS_DB')
             ? Number(configService.get('REDIS_DB'))
             : 0,
@@ -49,7 +67,17 @@ import { Logger } from 'winston';
           logger.info('[RedisModule] Reconnecting to Redis...');
         });
 
-        await client.connect();
+        // 连接错误处理
+        try {
+          await client.connect();
+          logger.info('[RedisModule] Redis client initialized successfully');
+        } catch (error) {
+          logger.error(
+            `[RedisModule] Failed to connect to Redis: ${error.message}`,
+          );
+          throw InitializationExceptions.REDIS_CONNECTION_FAILED(error.message);
+        }
+
         return client;
       },
       inject: [ConfigService, WINSTON_MODULE_PROVIDER],

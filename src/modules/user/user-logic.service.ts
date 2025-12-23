@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { RoleLogicService } from '../role/role-logic.service';
 import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { BusinessExceptions } from '../../common/utils/exception';
+import { BusinessExceptions } from '../../common/utils/exception/business.exception';
 
 @Injectable()
 export class UserLogicService {

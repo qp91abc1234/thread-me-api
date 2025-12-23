@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UpdateUserDto } from './dto/user.dto';
-import { BusinessExceptions } from '../../common/utils/exception';
+import { BusinessExceptions } from '../../common/utils/exception/business.exception';
 import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { UserLogicService } from './user-logic.service';

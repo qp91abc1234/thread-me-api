@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { BusinessExceptions } from '../utils/exception';
+import { BusinessExceptions } from '../utils/exception/business.exception';
 import { METADATA_KEY } from '../constant/constant';
 
 @Injectable()
