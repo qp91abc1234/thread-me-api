@@ -17,7 +17,20 @@ import { Logger } from 'winston';
           socket: {
             host: configService.get('REDIS_HOST'),
             port: Number(configService.get('REDIS_PORT')),
+            reconnectStrategy: (retries) => {
+              if (retries > 10) {
+                logger.error('[RedisModule] Max reconnection attempts reached');
+                // 返回 Error 对象让 redis 客户端停止重连（非抛出异常，不会被异常过滤器接收）
+                return new Error('Max reconnection attempts reached');
+              }
+              const delay = Math.min(retries * 100, 3000);
+              logger.warn(
+                `[RedisModule] Reconnecting in ${delay}ms (attempt ${retries})`,
+              );
+              return delay;
+            },
           },
+          password: configService.get('REDIS_PASSWORD'),
           database: configService.get('REDIS_DB')
             ? Number(configService.get('REDIS_DB'))
             : 0,
@@ -30,6 +43,10 @@ import { Logger } from 'winston';
 
         client.on('connect', () => {
           logger.info('[RedisModule] Connected successfully');
+        });
+
+        client.on('reconnecting', () => {
+          logger.info('[RedisModule] Reconnecting to Redis...');
         });
 
         await client.connect();
