@@ -8,14 +8,17 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileUploadService } from './file-upload.service';
 import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import * as OSS from 'ali-oss';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import * as fs from 'fs';
-import { OssInfoVo, UploadFilesDto } from './vo/file-upload.dto';
-import { multerOptions, storage, uploadDest } from './common/config';
+import {
+  OssInfoVo,
+  UploadChunkDto,
+  UploadFilesDto,
+} from './vo/file-upload.dto';
+import { multerOptions, uploadDest } from './common/config';
 
 @ApiTags('file-upload')
 @Controller('file-upload')
@@ -23,10 +26,7 @@ export class FileUploadController {
   private uploadBaseUrl: string;
   private ossClient: OSS;
 
-  constructor(
-    private readonly fileUploadService: FileUploadService,
-    private readonly configService: ConfigService,
-  ) {
+  constructor(private readonly configService: ConfigService) {
     this.uploadBaseUrl = `${this.configService.get('APP_URL')}/static/upload/`;
     this.ossClient = new OSS({
       region: this.configService.get('OSS_REGION'),
@@ -38,7 +38,7 @@ export class FileUploadController {
 
   @Post('uploadFiles')
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(AnyFilesInterceptor(multerOptions))
+  @UseInterceptors(AnyFilesInterceptor(multerOptions.uploadFiles))
   uploadFiles(
     @Body() body: UploadFilesDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
@@ -48,15 +48,11 @@ export class FileUploadController {
   }
 
   @Post('uploadChunk')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      // 'file' 是前端表单字段名，要和前端一致
-      storage: storage,
-    }),
-  )
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('file', multerOptions.uploadChunk))
   async uploadChunk(
     @UploadedFile() file: Express.Multer.File,
-    @Body() body: { name: string },
+    @Body() body: UploadChunkDto,
   ) {
     const fileName = body.name.match(/(.+)\-\d+$/)[1];
     const chunkDir = `${uploadDest}chunks_${fileName}`;

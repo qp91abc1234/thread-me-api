@@ -12,6 +12,21 @@ export class UploadFilesDto {
   files: string[];
 }
 
+export class UploadChunkDto {
+  @ApiProperty({
+    type: 'string',
+    format: 'binary',
+    description: '文件块',
+  })
+  file: string;
+
+  @ApiProperty({
+    type: 'string',
+    description: '文件块名称',
+  })
+  name: string;
+}
+
 export class OssInfoVo {
   policy: string;
   OSSAccessKeyId: string;
