@@ -71,6 +71,7 @@ import { SystemExceptions } from '../../common/utils/exception/system.exception'
           socket: {
             host,
             port: portNumber,
+            keepAlive: 30000,
             reconnectStrategy: (retries) => {
               if (retries > 10) {
                 logger.error('[RedisModule] Max reconnection attempts reached');
