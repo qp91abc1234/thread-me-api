@@ -32,3 +32,30 @@ node-redis 的 get/set 操作针对字符串数据，set 方法会使用 String(
 
 **相关代码位置：** `src/infrastructure/redis/redis.service.ts`
 
+## Throttler 限流存储
+
+Throttler 存储服务是 Redis 存储适配器，用于 Throttler 限流，实现分布式限流计数，支持多实例共享计数。
+
+### increment 方法说明
+
+`increment` 方法用于增加限流计数并返回限流状态。
+
+**参数：**
+- `key` (string): 限流键，例如 `throttler:default:IP`
+- `ttl` (number): 时间窗口（毫秒）
+- `limit` (number): 限制次数
+- `blockDuration` (number): 阻塞时长（毫秒），当请求超过限制时，额外阻塞的时间
+- `throttlerName` (string): 限流规则名称，例如 `default`
+
+**返回值：**
+```typescript
+{
+  totalHits: number;        // 时间窗口内的请求次数
+  isBlocked: boolean;        // 是否被阻塞（超过限制次数）
+  timeToExpire: number;     // 最早的有效记录过期时间（秒），过期后计数会减少
+  timeToBlockExpire: number; // 阻塞剩余时间（秒），阻塞期间如有新请求，阻塞时间会重置
+}
+```
+
+**相关代码位置：** `src/infrastructure/throttler-storage/throttler-storage.service.ts`
+
