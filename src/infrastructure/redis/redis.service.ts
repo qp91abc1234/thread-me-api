@@ -56,18 +56,8 @@ export class RedisService implements OnModuleDestroy {
    */
   async set(key: string, value: any, options?: CacheOptions): Promise<void> {
     /**
-     * 序列化处理说明：
-     * node-redis 的 get/set 操作针对字符串数据，set 方法会使用 String() 函数对传入的 value 进行类型转换。
-     * 这种转换方式会导致数据丢失和类型丢失：
-     * - 对象 { id: 1 } → String() → "[object Object]" ❌ 数据丢失
-     * - 数组 [1, 2, 3] → String() → "1,2,3" ⚠️ 无法区分字符串和数组
-     *
-     * 因此统一使用 JSON 序列化：
-     * - 所有类型都使用 JSON.stringify()，保证类型恢复：get() 时能正确还原原始类型
-     * - 特殊情况：undefined
-     *   - JSON.stringify(undefined) 返回 undefined（不是字符串）
-     *   - 会由 node-redis 底层 String() 处理，存储为 "undefined" 字符串
-     *   - 获取值时需要在 get() 方法中特殊处理，将 "undefined" 还原为 undefined
+     * Redis 序列化处理
+     * @see docs/technical-notes.md#redis-序列化处理
      */
     const serializedValue = JSON.stringify(value);
 

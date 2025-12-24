@@ -36,6 +36,10 @@ import { ThrottlerStorageService } from './infrastructure/throttler-storage/thro
     }),
     ConfigModule.forRoot({
       isGlobal: true,
+      /**
+       * 环境变量加载配置
+       * @see docs/technical-notes.md#环境变量加载机制
+       */
       envFilePath: [
         `.env.${process.env.NODE_ENV || 'development'}.local`,
         `.env.${process.env.NODE_ENV || 'development'}`,
