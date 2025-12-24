@@ -102,7 +102,6 @@ import { ThrottlerStorageService } from './infrastructure/throttler-storage/thro
     }),
     PrismaModule,
     RedisModule,
-    ThrottlerStorageModule,
     UserModule,
     RoleModule,
     PermissionModule,
