@@ -1,32 +1,31 @@
-import { Module, ValidationPipe } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { UserModule } from './modules/user/user.module';
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
-import { ThrottlerGuard } from '@nestjs/throttler';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { RespInterceptor } from './common/interceptor/resp.interceptor';
-import { HttpExceptionFilter } from './common/filter/http-exception.filter';
-import { JwtModule } from '@nestjs/jwt';
-import { utilities, WinstonModule } from 'nest-winston';
-import { FileUploadModule } from './modules/file-upload/file-upload.module';
-import { PermissionModule } from './modules/permission/permission.module';
-import { RoleModule } from './modules/role/role.module';
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
-import { CommonExceptionFilter } from './common/filter/common-exception.filter';
-import { JwtGuard } from './common/guard/jwt.guard';
-import { PermissionGuard } from './common/guard/permission.guard';
-import { RedisModule } from './infrastructure/redis/redis.module';
-import { AuthModule } from './modules/auth/auth.module';
-import { LangchainModule } from './modules/langchain/langchain.module';
+import { Module, ValidationPipe } from '@nestjs/common';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { utilities, WinstonModule } from 'nest-winston';
 import { PrismaModule } from './infrastructure/prisma/prisma.module';
-import { PrismaClientExceptionFilter } from './common/filter/prisma-exception.filter';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { RedisModule } from './infrastructure/redis/redis.module';
 import { ThrottlerStorageModule } from './infrastructure/throttler-storage/throttler-storage.module';
 import { ThrottlerStorageService } from './infrastructure/throttler-storage/throttler-storage.service';
+import { CommonExceptionFilter } from './common/filter/common-exception.filter';
+import { HttpExceptionFilter } from './common/filter/http-exception.filter';
+import { PrismaClientExceptionFilter } from './common/filter/prisma-exception.filter';
+import { JwtGuard } from './common/guard/jwt.guard';
+import { PermissionGuard } from './common/guard/permission.guard';
+import { RespInterceptor } from './common/interceptor/resp.interceptor';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { AuthModule } from './modules/auth/auth.module';
+import { FileUploadModule } from './modules/file-upload/file-upload.module';
+import { LangchainModule } from './modules/langchain/langchain.module';
+import { PermissionModule } from './modules/permission/permission.module';
+import { RoleModule } from './modules/role/role.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -102,12 +101,13 @@ import { ThrottlerStorageService } from './infrastructure/throttler-storage/thro
     }),
     PrismaModule,
     RedisModule,
-    UserModule,
-    RoleModule,
-    PermissionModule,
+    ThrottlerStorageModule,
     AuthModule,
     FileUploadModule,
     LangchainModule,
+    UserModule,
+    RoleModule,
+    PermissionModule,
   ],
   controllers: [AppController],
   providers: [
