@@ -35,6 +35,38 @@ import { SystemExceptions } from '../../common/utils/exception/system.exception'
           throw SystemExceptions.REDIS_PORT_INVALID(port);
         }
 
+        let keepAliveInterval: NodeJS.Timeout | null = null;
+
+        const startKeepAlive = () => {
+          if (keepAliveInterval) {
+            clearInterval(keepAliveInterval);
+          }
+
+          // 每30秒发送一次 PING 命令保持连接活跃
+          keepAliveInterval = setInterval(async () => {
+            try {
+              if (client.isOpen) {
+                await client.ping();
+              } else {
+                logger.warn('[RedisModule] Client not open, skipping ping');
+                if (keepAliveInterval) {
+                  clearInterval(keepAliveInterval);
+                  keepAliveInterval = null;
+                }
+              }
+            } catch (error) {
+              logger.warn(
+                `[RedisModule] Keep-alive ping failed: ${error.message}`,
+              );
+              // 如果 ping 失败，连接可能已断开，重连策略会处理
+            }
+          }, 30000);
+
+          logger.info(
+            '[RedisModule] Keep-alive mechanism started (30s interval)',
+          );
+        };
+
         const client = createClient({
           socket: {
             host,
@@ -69,6 +101,21 @@ import { SystemExceptions } from '../../common/utils/exception/system.exception'
 
         client.on('reconnecting', () => {
           logger.info('[RedisModule] Reconnecting to Redis...');
+        });
+
+        client.on('ready', () => {
+          logger.info(
+            '[RedisModule] Client ready, starting/restarting keep-alive',
+          );
+          startKeepAlive();
+        });
+
+        client.on('end', () => {
+          logger.warn('[RedisModule] Connection ended, clearing keep-alive');
+          if (keepAliveInterval) {
+            clearInterval(keepAliveInterval);
+            keepAliveInterval = null;
+          }
         });
 
         // 连接错误处理

@@ -14,16 +14,6 @@ const createException = (
 };
 
 export const BusinessExceptions = {
-  // ========== 400 Bad Request - 参数错误 ==========
-  UNSUPPORT_FILE_TYPE: () =>
-    createException(
-      {
-        code: 'UNSUPPORT_FILE_TYPE',
-        message: '不支持的文件类型',
-      },
-      HttpStatus.BAD_REQUEST,
-    ),
-
   // ========== 401 Unauthorized - 认证失败 ==========
   PWD_ERR: () =>
     createException(
