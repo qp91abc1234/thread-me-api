@@ -56,28 +56,32 @@ import { ThrottlerStorageService } from './infrastructure/throttler-storage/thro
       inject: [ConfigService],
     }),
     WinstonModule.forRootAsync({
-      useFactory: (configService: ConfigService) => ({
-        transports: [
-          new winston.transports.DailyRotateFile({
-            level: configService.get('WINSTON_LEVEL'),
-            dirname: configService.get('WINSTON_DIRNAME'),
-            filename: configService.get('WINSTON_FILENAME'),
-            datePattern: configService.get('WINSTON_DATE_PATTERN'),
-            maxSize: configService.get('WINSTON_MAX_SIZE'),
-            format: winston.format.combine(
-              winston.format.timestamp(),
-              winston.format.json(),
-            ),
-          }),
-          new winston.transports.Console({
-            level: configService.get('WINSTON_LEVEL'),
-            format: winston.format.combine(
-              winston.format.timestamp(),
-              utilities.format.nestLike(),
-            ),
-          }),
-        ],
-      }),
+      useFactory: (configService: ConfigService) => {
+        const isProduction = process.env.NODE_ENV === 'production';
+        return {
+          transports: [
+            new winston.transports.DailyRotateFile({
+              level: 'info',
+              dirname: isProduction ? 'daily-prod-log' : 'daily-dev-log',
+              filename: 'log-%DATE%.log',
+              datePattern: 'YYYY-MM-DD',
+              maxFiles: configService.get('WINSTON_MAX_FILES'),
+              maxSize: configService.get('WINSTON_MAX_SIZE'),
+              format: winston.format.combine(
+                winston.format.timestamp(),
+                winston.format.json(),
+              ),
+            }),
+            new winston.transports.Console({
+              level: isProduction ? 'info' : 'debug',
+              format: winston.format.combine(
+                winston.format.timestamp(),
+                utilities.format.nestLike(),
+              ),
+            }),
+          ],
+        };
+      },
       inject: [ConfigService],
     }),
     ThrottlerModule.forRootAsync({
