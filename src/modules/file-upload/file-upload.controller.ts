@@ -62,7 +62,9 @@ export class FileUploadController {
 
   @Get('merge')
   async merge(@Query('name') name: string) {
-    const dest = `${uploadDest}${name}`;
+    const finalName =
+      Date.now() + '-' + Math.round(Math.random() * 1e9) + '-' + name;
+    const dest = `${uploadDest}${finalName}`;
     const chunkDir = `${uploadDest}chunks_${name}`;
     const files = await fs.promises.readdir(chunkDir);
 
@@ -99,7 +101,7 @@ export class FileUploadController {
     // 4. 合并完成后删除临时目录
     await fs.promises.rm(chunkDir, { recursive: true });
 
-    return `${this.uploadBaseUrl}${name}`;
+    return `${this.uploadBaseUrl}${finalName}`;
   }
 
   @Get('ossInfo')
