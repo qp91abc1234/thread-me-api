@@ -1,0 +1,11 @@
+{
+  
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "package.json": "pnpm-lock.yaml,Dockerfile,.gitignore,.dockerignore",
+    ".env": ".env.*",
+    "tsconfig.json": "tsconfig.*",
+    ".eslintrc.js": ".prettierrc,.eslintrc.js",
+    "nest-cli.json": "nest-config.ts,prisma.config.ts"
+  }
+}
