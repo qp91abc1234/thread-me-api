@@ -44,7 +44,7 @@ const SEED_CONFIG = {
     },
     {
       username: 'user',
-      password: 'user123',
+      password: '123456',
       isSystem: true,
       roles: ['general_user'],
     },

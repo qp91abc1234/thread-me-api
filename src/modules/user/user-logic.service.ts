@@ -104,6 +104,7 @@ export class UserLogicService {
       roles?: boolean;
       permissions?: boolean;
       skipThrow?: boolean;
+      skipOmit?: boolean;
     } = {},
   ) {
     const rolesConfig = this.getRolesConfig(options);
@@ -113,7 +114,7 @@ export class UserLogicService {
         typeof idorname === 'number'
           ? { id: idorname }
           : { username: idorname },
-      omit: this.omitFields,
+      omit: options.skipOmit ? undefined : this.omitFields,
       include: {
         roles: rolesConfig,
       },
