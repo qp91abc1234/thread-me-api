@@ -12,7 +12,7 @@ export class JwtGuard extends AuthGuard('jwt') {
 
   canActivate(context: ExecutionContext) {
     const requireLogin = this.reflector.getAllAndOverride<boolean>(
-      METADATA_KEY.REQUIRE_LOGIN,
+      METADATA_KEY.REQUIRE_NO_LOGIN,
       [context.getHandler(), context.getClass()],
     );
 
