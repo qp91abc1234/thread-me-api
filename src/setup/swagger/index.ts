@@ -1,10 +1,9 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, RequestMethod } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { registerHook } from '../traverse/traverse';
 import { Reflector } from '@nestjs/core';
 import { METADATA_KEY } from 'src/common/constant/constant';
 import { buildFullPath, getControllerPath } from './utils';
-import { HTTP_METHODS } from '../constant';
 
 export function setupSwagger(app: INestApplication) {
   const document = init(app);
@@ -44,9 +43,9 @@ function registerTraverseHook(app: INestApplication, document: any): void {
     },
     onMethod: (_, controllerClass, method) => {
       const controllerPath = controllerPathCache.get(controllerClass);
-      const httpMethodIndex = Reflect.getMetadata('method', method);
+      const requestMethodValue = Reflect.getMetadata('method', method);
       const methodPath = Reflect.getMetadata('path', method);
-      const httpMethod = HTTP_METHODS[httpMethodIndex];
+      const httpMethod = RequestMethod[requestMethodValue]?.toLowerCase();
 
       // 构建完整路径
       const fullPath = buildFullPath(controllerPath, methodPath);

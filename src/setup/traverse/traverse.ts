@@ -1,7 +1,6 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, RequestMethod } from '@nestjs/common';
 import { ModulesContainer } from '@nestjs/core';
 import { NestModulesTraverseHooks } from './traverse.d';
-import { HTTP_METHODS } from '../constant';
 
 /**
  * 存储所有注册的钩子
@@ -74,8 +73,8 @@ export function traverse(app: INestApplication): void {
       methodNames.forEach((methodName) => {
         const method = prototype[methodName];
 
-        const httpMethodIndex = Reflect.getMetadata('method', method);
-        const httpMethod = HTTP_METHODS[httpMethodIndex];
+        const requestMethodValue = Reflect.getMetadata('method', method);
+        const httpMethod = RequestMethod[requestMethodValue]?.toLowerCase();
         if (!httpMethod) {
           return;
         }
