@@ -1,3 +1,7 @@
+/**
+ * 路径解析支持（baseUrl 和 paths 配置）
+ * @see docs/typescript-path-resolution.md#解决方案
+ */
 import 'tsconfig-paths/register';
 
 import { NestFactory } from '@nestjs/core';

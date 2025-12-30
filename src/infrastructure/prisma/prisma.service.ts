@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from 'prisma/generated/client';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 import { ConfigService } from '@nestjs/config';
 
