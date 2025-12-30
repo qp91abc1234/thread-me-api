@@ -13,26 +13,15 @@ const prisma = new PrismaClient({
   adapter: new PrismaMariaDb(env('DATABASE_URL')),
 });
 
-const SYS_MANAGE_PERM = 'sys:manage';
-
 const SEED_CONFIG = {
-  PERMISSIONS: [
-    { name: SYS_MANAGE_PERM, isSystem: true }, // 系统管理超权
-    { name: 'user:create', isSystem: false },
-    { name: 'user:update', isSystem: false },
-    { name: 'user:delete', isSystem: false },
-    { name: 'user:query', isSystem: false },
-  ],
   ROLES: [
     {
       name: 'admin',
       isSystem: true,
-      permissions: [SYS_MANAGE_PERM],
     },
     {
       name: 'general_user',
       isSystem: true,
-      permissions: [],
     },
   ],
   USERS: [
@@ -54,39 +43,20 @@ const SEED_CONFIG = {
 async function main() {
   console.log('🌱 Starting seeding...');
 
-  // 1. 初始化权限 (Permissions)
-  for (const p of SEED_CONFIG.PERMISSIONS) {
-    await prisma.permission.upsert({
-      where: { name: p.name },
-      update: {},
-      create: p,
-    });
-    console.log(`✅ Upserted Permission: ${p.name}`);
-  }
-
-  // 2. 初始化角色 (Roles)
+  // 1. 初始化角色 (Roles)
   for (const r of SEED_CONFIG.ROLES) {
-    const permissionsConnect = r.permissions.map((pName) => ({ name: pName }));
-
     await prisma.role.upsert({
       where: { name: r.name },
-      update: {
-        permissions: {
-          set: permissionsConnect,
-        },
-      },
+      update: {},
       create: {
         name: r.name,
         isSystem: r.isSystem,
-        permissions: {
-          connect: permissionsConnect,
-        },
       },
     });
     console.log(`✅ Upserted Role: ${r.name}`);
   }
 
-  // 3. 初始化用户 (Users)
+  // 2. 初始化用户 (Users)
   for (const u of SEED_CONFIG.USERS) {
     const rolesConnect = u.roles.map((rName) => ({ name: rName }));
 

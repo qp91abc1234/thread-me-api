@@ -13,27 +13,79 @@ model User {
   id          Int      @id @default(autoincrement())
   username    String   @unique @db.VarChar(50)
   password    String   @db.VarChar(100)
+  realName    String   @db.VarChar(50)  // 真实姓名
+  email       String   @db.VarChar(100) // 邮箱
+  phone       String   @db.VarChar(20)  // 手机号
+  status      Int      @default(1)      // 状态：0-禁用，1-启用
   isSystem    Boolean  @default(false)
   createTime  DateTime @default(now())
   updateTime  DateTime @updatedAt
+
   roles       Role[]
 }
 
 model Role {
   id          Int          @id @default(autoincrement())
   name        String       @unique @db.VarChar(20)
+  status      Int          @default(1)      // 状态：0-禁用，1-启用
   isSystem    Boolean      @default(false)
   createTime  DateTime     @default(now())
   updateTime  DateTime     @updatedAt
-  users       User[]
-  permissions Permission[]
+
+  users       User[]      
+  apiPermissions ApiPermission[]
+  menus       Menu[]
 }
 
-model Permission {
-  id         Int      @id @default(autoincrement())
-  name       String   @unique @db.VarChar(50)
-  isSystem   Boolean  @default(false)
-  createTime DateTime @default(now())
-  updateTime DateTime @updatedAt
-  roles      Role[]
+model ApiPermission {
+  id          Int      @id @default(autoincrement())  
+  path        String   @db.VarChar(200)
+  method      String   @db.VarChar(10)  // GET, POST, PUT, DELETE等
+  matchType   String   @default("exact") @db.VarChar(20) // exact, prefix
+  desc        String   @unique @db.VarChar(100)
+  isSystem    Boolean  @default(false)
+  createTime  DateTime @default(now())
+  updateTime  DateTime @updatedAt
+
+  roles       Role[]   // 隐式多对多：API权限可以分配给多个角色  
+  @@index([path, method]) // @@index：在数据库层面创建复合索引，加速基于 path 和 method 的权限查询
+}
+
+model Menu {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(50)
+  path        String   @db.VarChar(200)
+  icon        String?  @db.VarChar(50)
+  compPath    String?  @db.VarChar(200)
+  sort        Int      @default(0)
+  visible     Boolean  @default(true)
+  status      Int      @default(1)      // 状态：0-禁用，1-启用
+  isSystem    Boolean  @default(false)
+  createTime  DateTime @default(now())
+  updateTime  DateTime @updatedAt
+
+  parentId    Int?
+  parent      Menu?    @relation("MenuTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children    Menu[]   @relation("MenuTree")
+
+  roles       Role[]
+  buttons     Button[]
+  
+  @@index([parentId]) // 数据库层面创建索引，优化基于 parentId 的查询
+}
+
+model Button {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(50)
+  code        String   @db.VarChar(50) // 按钮标识码
+  status      Int      @default(1)      // 状态：0-禁用，1-启用
+  isSystem    Boolean  @default(false)
+  createTime  DateTime @default(now())
+  updateTime  DateTime @updatedAt
+  
+  menuId      Int
+  menu        Menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
+
+  @@unique([menuId, code])
+  @@index([menuId, code])
 }
