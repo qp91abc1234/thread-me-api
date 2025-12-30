@@ -136,13 +136,13 @@ async function collectApiPermissions() {
   console.log('🚀 Starting API permission collection...\n');
 
   // 1. 创建应用上下文（不启动 HTTP 服务）
-  const app = await NestFactory.createApplicationContext(AppModule, {
+  const app = await NestFactory.create(AppModule, {
     logger: false, // 禁用日志，避免干扰输出
   });
 
   // 2. 生成 Swagger 文档
   const document = SwaggerModule.createDocument(
-    app as any,
+    app,
     new DocumentBuilder().build(),
   );
 
