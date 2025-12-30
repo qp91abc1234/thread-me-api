@@ -1,4 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import 'tsconfig-paths/register';
+
+import { PrismaClient } from 'prisma/generated/client';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 import * as bcrypt from 'bcrypt';
 import { config } from 'dotenv';
@@ -17,10 +19,12 @@ const SEED_CONFIG = {
   ROLES: [
     {
       name: 'admin',
+      status: 1, // 状态：0-禁用，1-启用
       isSystem: true,
     },
     {
       name: 'general_user',
+      status: 1, // 状态：0-禁用，1-启用
       isSystem: true,
     },
   ],
@@ -28,12 +32,20 @@ const SEED_CONFIG = {
     {
       username: 'admin',
       password: 'admin123',
+      realName: '管理员',
+      email: '',
+      phone: '',
+      status: 1, // 状态：0-禁用，1-启用
       isSystem: true,
       roles: ['admin'],
     },
     {
       username: 'user',
       password: '123456',
+      realName: '普通用户',
+      email: '',
+      phone: '',
+      status: 1, // 状态：0-禁用，1-启用
       isSystem: true,
       roles: ['general_user'],
     },
@@ -47,9 +59,12 @@ async function main() {
   for (const r of SEED_CONFIG.ROLES) {
     await prisma.role.upsert({
       where: { name: r.name },
-      update: {},
+      update: {
+        status: r.status,
+      },
       create: {
         name: r.name,
+        status: r.status,
         isSystem: r.isSystem,
       },
     });
@@ -70,24 +85,32 @@ async function main() {
         data: {
           username: u.username,
           password: hashedPassword,
+          realName: u.realName,
+          email: u.email,
+          phone: u.phone,
+          status: u.status,
           isSystem: u.isSystem,
           roles: {
             connect: rolesConnect,
           },
         },
       });
-      console.log(`✅ Created User: ${u.username}`);
+      console.log(`✅ Created User: ${u.username} (${u.realName})`);
     } else {
-      // 仅更新角色，不重置密码
+      // 更新用户信息（不重置密码）
       await prisma.user.update({
         where: { username: u.username },
         data: {
+          realName: u.realName,
+          email: u.email,
+          phone: u.phone,
+          status: u.status,
           roles: {
             set: rolesConnect,
           },
         },
       });
-      console.log(`🔄 Updated User roles: ${u.username}`);
+      console.log(`🔄 Updated User: ${u.username} (${u.realName})`);
     }
   }
 

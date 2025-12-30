@@ -43,7 +43,6 @@ model ApiPermission {
   method      String   @db.VarChar(10)  // GET, POST, PUT, DELETE等
   matchType   String   @default("exact") @db.VarChar(20) // exact, prefix
   desc        String   @unique @db.VarChar(100)
-  isSystem    Boolean  @default(false)
   createTime  DateTime @default(now())
   updateTime  DateTime @updatedAt
 
@@ -60,7 +59,6 @@ model Menu {
   sort        Int      @default(0)
   visible     Boolean  @default(true)
   status      Int      @default(1)      // 状态：0-禁用，1-启用
-  isSystem    Boolean  @default(false)
   createTime  DateTime @default(now())
   updateTime  DateTime @updatedAt
 
@@ -79,7 +77,6 @@ model Button {
   name        String   @db.VarChar(50)
   code        String   @db.VarChar(50) // 按钮标识码
   status      Int      @default(1)      // 状态：0-禁用，1-启用
-  isSystem    Boolean  @default(false)
   createTime  DateTime @default(now())
   updateTime  DateTime @updatedAt
   
