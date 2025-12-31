@@ -7,7 +7,6 @@ import {
   Min,
   Max,
 } from 'class-validator';
-import { Type } from 'class-transformer';
 
 export class RoleQueryParamsDto {
   @IsOptional()
@@ -15,18 +14,13 @@ export class RoleQueryParamsDto {
   name?: string;
 
   @IsOptional()
-  @Type(() => Number)
   @IsInt()
   status?: number;
 
-  @IsNotEmpty()
-  @Type(() => Number)
   @IsInt()
   @Min(1)
   currentPage: number;
 
-  @IsNotEmpty()
-  @Type(() => Number)
   @IsInt()
   @Min(1)
   @Max(100)
@@ -38,7 +32,6 @@ export class CreateRoleDto {
   @IsString()
   name: string;
 
-  @Type(() => Number)
   @IsInt()
   status: number;
 }
@@ -49,19 +42,14 @@ export class UpdateRoleDto {
   name?: string;
 
   @IsOptional()
-  @Type(() => Number)
   @IsInt()
   status?: number;
 }
 
 export class RolePermissionDto {
-  @IsNotEmpty()
   @IsArray()
-  @Type(() => Number)
   menuIds: number[];
 
-  @IsNotEmpty()
   @IsArray()
-  @Type(() => Number)
   apiPermissionIds: number[];
 }

@@ -8,7 +8,6 @@ import {
   Min,
   Max,
 } from 'class-validator';
-import { Type } from 'class-transformer';
 
 export class UserQueryParamsDto {
   @IsOptional()
@@ -16,18 +15,13 @@ export class UserQueryParamsDto {
   username?: string;
 
   @IsOptional()
-  @Type(() => Number)
   @IsInt()
   status?: number;
 
-  @IsNotEmpty()
-  @Type(() => Number)
   @IsInt()
   @Min(1)
   currentPage: number;
 
-  @IsNotEmpty()
-  @Type(() => Number)
   @IsInt()
   @Min(1)
   @Max(100)
@@ -47,18 +41,18 @@ export class CreateUserDto {
   @IsString()
   realName: string;
 
+  @IsNotEmpty()
   @IsEmail()
   email: string;
 
+  @IsNotEmpty()
   @IsString()
   phone: string;
 
-  @Type(() => Number)
   @IsInt()
   status: number;
 
   @IsArray()
-  @Type(() => Number)
   roleIds: number[];
 }
 
@@ -80,12 +74,10 @@ export class UpdateUserDto {
   phone?: string;
 
   @IsOptional()
-  @Type(() => Number)
   @IsInt()
   status?: number;
 
   @IsOptional()
   @IsArray()
-  @Type(() => Number)
   roleIds?: number[];
 }
