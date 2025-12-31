@@ -15,9 +15,13 @@ export class PermissionService {
 
   // ========== Menu Methods ==========
 
-  async getMenuTree() {
+  async getMenuTree(status?: number) {
     // 获取所有菜单
-    const menus = await this.prisma.menu.findMany();
+    const menus = await this.prisma.menu.findMany({
+      where: {
+        status: status ?? undefined,
+      },
+    });
 
     // 构建树形结构
     const menuMap = new Map();
