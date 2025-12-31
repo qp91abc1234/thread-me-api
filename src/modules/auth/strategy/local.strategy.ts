@@ -38,8 +38,8 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
     // 提取每个角色的API权限信息（用于缓存）
     const rolePermissions = user.roles.map((role) => ({
       roleId: role.id,
-      permissions: role.apiPermissions.map(
-        (perm) => `${perm.method}:${perm.path}`,
+      apiPermissions: role.apiPermissions.map(
+        (perm) => `${perm.method}:${perm.path}:${perm.matchType}`,
       ),
     }));
 

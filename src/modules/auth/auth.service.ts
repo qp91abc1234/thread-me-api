@@ -61,8 +61,8 @@ export class AuthService {
     // 提取每个角色的权限信息
     const rolePermissions = user.roles.map((role) => ({
       roleId: role.id,
-      permissions: role.apiPermissions.map(
-        (perm) => `${perm.method}:${perm.path}`,
+      apiPermissions: role.apiPermissions.map(
+        (perm) => `${perm.method}:${perm.path}:${perm.matchType}`,
       ),
     }));
 
@@ -107,8 +107,8 @@ export class AuthService {
     // 提取每个角色的权限信息
     const rolePermissions = user.roles.map((role) => ({
       roleId: role.id,
-      permissions: role.apiPermissions.map(
-        (perm) => `${perm.method}:${perm.path}`,
+      apiPermissions: role.apiPermissions.map(
+        (perm) => `${perm.method}:${perm.path}:${perm.matchType}`,
       ),
     }));
 

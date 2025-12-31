@@ -6,7 +6,7 @@ import { RedisService } from '../../infrastructure/redis/redis.service';
 
 export type RolePermission = {
   roleId: number;
-  permissions: string[];
+  apiPermissions: string[];
 };
 
 export type UserForAuth = Omit<User, 'roles' | 'password'> & {
@@ -34,7 +34,7 @@ export class AuthLogicService {
         user.rolePermissions.map((rolePerm) =>
           this.redisService.set(
             `role:${rolePerm.roleId}:permissions`,
-            rolePerm.permissions,
+            rolePerm.apiPermissions,
           ),
         ),
       );
