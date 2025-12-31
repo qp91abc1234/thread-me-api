@@ -20,10 +20,11 @@ import { PermissionGuard } from './common/guard/permission.guard';
 import { RespInterceptor } from './common/interceptor/resp.interceptor';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-// import { AuthModule } from './modules/auth/auth.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { FileUploadModule } from './modules/file-upload/file-upload.module';
 import { RoleModule } from './modules/role/role.module';
 import { UserModule } from './modules/user/user.module';
+import { PermissionModule } from './modules/permission/permission.module';
 
 @Module({
   imports: [
@@ -100,10 +101,11 @@ import { UserModule } from './modules/user/user.module';
     PrismaModule,
     RedisModule,
     ThrottlerStorageModule,
-    // AuthModule,
+    AuthModule,
     FileUploadModule,
     UserModule,
     RoleModule,
+    PermissionModule,
   ],
   controllers: [AppController],
   providers: [

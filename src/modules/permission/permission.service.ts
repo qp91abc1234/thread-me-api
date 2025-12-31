@@ -19,7 +19,7 @@ export class PermissionService {
     // 获取所有菜单
     const menus = await this.prisma.menu.findMany({
       where: {
-        status: status ?? undefined,
+        status,
       },
     });
 
