@@ -18,7 +18,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
-import { AuthLogicService, UserWithRelations } from './auth-logic.service';
+import { AuthLogicService, UserForAuth } from './auth-logic.service';
 import { GithubAuthGuard } from './guard/github.guard';
 
 @ApiTags('auth')
@@ -33,7 +33,7 @@ export class AuthController {
   @UseGuards(AuthGuard('local'))
   async login(
     @Body() loginUserDto: LoginUserDto,
-    @Request() req: { user: UserWithRelations },
+    @Request() req: { user: UserForAuth },
   ): Promise<LoginUserVo> {
     return await this.authLogicService.sign(req.user);
   }

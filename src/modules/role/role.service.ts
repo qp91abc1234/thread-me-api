@@ -7,10 +7,14 @@ import {
   RoleQueryParamsDto,
   RolePermissionDto,
 } from './dto/role.dto';
+import { RedisService } from '../../infrastructure/redis/redis.service';
 
 @Injectable()
 export class RoleService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly redisService: RedisService,
+  ) {}
 
   async getList(params: RoleQueryParamsDto) {
     const { name, status, currentPage, pageSize } = params;
@@ -122,6 +126,8 @@ export class RoleService {
       where: { id },
     });
 
+    await this.redisService.del(`role:${id}:permissions`);
+
     return true;
   }
 
@@ -201,6 +207,9 @@ export class RoleService {
         },
       },
     });
+
+    // 清除该角色的权限缓存，强制下次登录时重新加载
+    await this.redisService.del(`role:${id}:permissions`);
 
     return true;
   }
