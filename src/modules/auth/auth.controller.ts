@@ -20,9 +20,11 @@ import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { AuthLogicService, UserForAuth } from './auth-logic.service';
 import { GithubAuthGuard } from './guard/github.guard';
+import { RequireNoLogin } from '@/common/decorator/common.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
+@RequireNoLogin()
 export class AuthController {
   constructor(
     private readonly authService: AuthService,

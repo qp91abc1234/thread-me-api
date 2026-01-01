@@ -20,8 +20,7 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
       where: { username },
       include: {
         roles: {
-          select: { id: true },
-          include: { apiPermissions: true },
+          select: { id: true, apiPermissions: true },
         },
       },
     });
