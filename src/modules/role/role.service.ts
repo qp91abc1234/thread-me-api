@@ -91,11 +91,6 @@ export class RoleService {
       throw BusinessExceptions.NO_ROLE();
     }
 
-    // 系统角色不能更新
-    if (existingRole.isSystem) {
-      throw BusinessExceptions.OPERATION_FORBIDDEN('系统角色不能更新');
-    }
-
     // 如果更新角色名，检查是否冲突
     if (updateRoleDto.name && updateRoleDto.name !== existingRole.name) {
       const conflictRole = await this.prisma.role.findUnique({

@@ -32,12 +32,6 @@ export class PermissionGuard implements CanActivate {
       throw BusinessExceptions.OPERATION_FORBIDDEN('用户未分配角色');
     }
 
-    // 如果用户有 admin 角色，则跳过权限检查
-    const adminRoleId = Number(this.configService.get('OAUTH_ADMIN_ROLE_ID'));
-    if (roleIds.includes(adminRoleId)) {
-      return true;
-    }
-
     // 尝试从 Redis 获取权限，如果缓存不存在则从数据库查询
     const permissions = await this.getUserPermissions(roleIds);
     // 检查是否有匹配的权限

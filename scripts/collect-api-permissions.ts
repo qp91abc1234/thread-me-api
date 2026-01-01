@@ -162,11 +162,57 @@ async function collectApiPermissions() {
   return app;
 }
 
+/**
+ * 给 admin 角色绑定所有 API 权限
+ */
+async function bindApiPermissionsToAdmin(): Promise<void> {
+  console.log('\n🔗 Binding api permissions to admin role...\n');
+
+  // 1. 查找 admin 角色
+  const adminRole = await prisma.role.findUnique({
+    where: { name: 'admin' },
+  });
+
+  if (!adminRole) {
+    console.error('❌ Admin role not found. Please create admin role first.');
+    throw new Error('Admin role not found');
+  }
+
+  console.log(`✅ Found admin role: ${adminRole.name} (ID: ${adminRole.id})`);
+
+  // 2. 获取所有 API 权限
+  const allApiPermissions = await prisma.apiPermission.findMany({
+    select: { id: true },
+  });
+
+  console.log(`📋 Found ${allApiPermissions.length} API permissions`);
+
+  // 3. 绑定所有权限到 admin 角色
+  try {
+    await prisma.role.update({
+      where: { id: adminRole.id },
+      data: {
+        apiPermissions: {
+          set: allApiPermissions.map((perm) => ({ id: perm.id })),
+        },
+      },
+    });
+
+    console.log(
+      `\n✅ Successfully bound ${allApiPermissions.length} API permissions to admin role`,
+    );
+  } catch (error) {
+    console.error('❌ Error binding permissions to admin role:', error);
+    throw error;
+  }
+}
+
 // 执行收集
 async function main() {
   let app;
   try {
     app = await collectApiPermissions();
+    await bindApiPermissionsToAdmin();
   } catch (error) {
     console.error('❌ Error during API permission collection:', error);
     process.exit(1);
