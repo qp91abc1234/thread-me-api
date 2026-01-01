@@ -21,6 +21,9 @@ export class PermissionService {
       where: {
         status,
       },
+      include: {
+        children: true,
+      },
     });
 
     // 构建树形结构

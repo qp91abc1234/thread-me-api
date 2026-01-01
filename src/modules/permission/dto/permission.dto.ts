@@ -19,12 +19,12 @@ export class CreateMenuDto {
   @IsString()
   path: string;
 
-  @IsNotEmpty()
   @IsString()
   icon: string;
 
-  @IsNotEmpty()
   @IsString()
+  @ValidateIf((o) => o.type === 1)
+  @IsNotEmpty()
   compPath: string;
 
   @IsInt()
