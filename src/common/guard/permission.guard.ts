@@ -132,11 +132,11 @@ export class PermissionGuard implements CanActivate {
     requestPath: string,
   ): boolean {
     return permissions.some((perm) => {
-      // 解析权限字符串（可能包含 matchType）
-      const parts = perm.split(':');
-      const permMethod = parts[0];
-      const permPath = parts[1];
-      const matchType = parts[2] || 'exact'; // 默认为 exact
+      const firstColonIndex = perm.indexOf(':');
+      const lastColonIndex = perm.lastIndexOf(':');
+      const permMethod = perm.substring(0, firstColonIndex);
+      const permPath = perm.substring(firstColonIndex + 1, lastColonIndex);
+      const matchType = perm.substring(lastColonIndex + 1);
 
       // 方法必须匹配
       if (permMethod !== requestMethod) {
