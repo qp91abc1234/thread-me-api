@@ -24,8 +24,7 @@ export class AuthService {
       where: { username: profile.username || '' },
       include: {
         roles: {
-          select: { id: true },
-          include: { apiPermissions: true },
+          select: { id: true, apiPermissions: true },
         },
       },
     });
@@ -94,8 +93,7 @@ export class AuthService {
       where: { id: data.userId },
       include: {
         roles: {
-          select: { id: true },
-          include: { apiPermissions: true },
+          select: { id: true, apiPermissions: true },
         },
       },
     });

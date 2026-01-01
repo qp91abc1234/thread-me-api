@@ -44,7 +44,7 @@ export class UserService {
           },
         },
         orderBy: {
-          createTime: 'desc',
+          createTime: 'asc',
         },
       }),
       this.prisma.user.count({ where }),

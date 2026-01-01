@@ -37,7 +37,7 @@ export class RoleService {
         where,
         ...paginationParams,
         orderBy: {
-          createTime: 'desc',
+          createTime: 'asc',
         },
       }),
       this.prisma.role.count({ where }),

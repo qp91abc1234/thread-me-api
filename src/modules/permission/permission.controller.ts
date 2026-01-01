@@ -8,6 +8,7 @@ import {
   Param,
   ParseIntPipe,
   Query,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { PermissionService } from './permission.service';
@@ -28,7 +29,14 @@ export class PermissionController {
 
   @Get('menu/tree')
   @ApiOperation({ summary: '获取菜单树' })
-  async getMenuTree(@Query('status', ParseIntPipe) status?: number) {
+  async getMenuTree(
+    @Query(
+      'status',
+      new DefaultValuePipe(undefined),
+      new ParseIntPipe({ optional: true }),
+    )
+    status?: number,
+  ) {
     return await this.permissionService.getMenuTree(status);
   }
 
