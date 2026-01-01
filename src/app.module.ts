@@ -128,8 +128,13 @@ import { PermissionModule } from './modules/permission/permission.module';
     },
     {
       provide: APP_PIPE,
+      /**
+       * 全局数据验证管道配置
+       * @see docs/technical-notes.md#全局数据验证管道配置
+       */
       useValue: new ValidationPipe({
         transform: true,
+        whitelist: true,
         transformOptions: {
           enableImplicitConversion: true,
         },

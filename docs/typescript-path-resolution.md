@@ -88,3 +88,5 @@ import { PrismaClient } from 'prisma/generated/client';
 const app_module_1 = require("./app.module");
 const client_1 = require("../../../prisma/generated/client");
 ```
+
+**相关代码位置：** `scripts/prisma-seed.ts`, `scripts/collect-api-permissions.ts`
