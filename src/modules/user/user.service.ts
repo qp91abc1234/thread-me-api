@@ -148,6 +148,11 @@ export class UserService {
       throw BusinessExceptions.NO_USER();
     }
 
+    // 系统用户不能更新
+    if (existingUser.isSystem) {
+      throw BusinessExceptions.OPERATION_FORBIDDEN('系统用户不能更新');
+    }
+
     // 如果更新用户名，检查是否冲突
     if (
       updateUserDto.username &&
