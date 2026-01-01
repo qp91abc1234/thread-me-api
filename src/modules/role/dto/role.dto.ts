@@ -17,14 +17,16 @@ export class RoleQueryParamsDto {
   @IsInt()
   status?: number;
 
+  @IsOptional()
   @IsInt()
   @Min(1)
-  currentPage: number;
+  currentPage?: number;
 
+  @IsOptional()
   @IsInt()
   @Min(1)
   @Max(100)
-  pageSize: number;
+  pageSize?: number;
 }
 
 export class CreateRoleDto {

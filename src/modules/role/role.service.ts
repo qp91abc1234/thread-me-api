@@ -18,7 +18,11 @@ export class RoleService {
 
   async getList(params: RoleQueryParamsDto) {
     const { name, status, currentPage, pageSize } = params;
-    const skip = (currentPage - 1) * pageSize;
+
+    let paginationParams: { skip?: number; take?: number } = {};
+    if (currentPage !== undefined && pageSize !== undefined) {
+      paginationParams = { skip: (currentPage - 1) * pageSize, take: pageSize };
+    }
 
     const where: any = {};
     if (name) {
@@ -31,8 +35,7 @@ export class RoleService {
     const [list, total] = await Promise.all([
       this.prisma.role.findMany({
         where,
-        skip,
-        take: pageSize,
+        ...paginationParams,
         orderBy: {
           createTime: 'desc',
         },

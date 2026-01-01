@@ -14,7 +14,11 @@ export class UserService {
 
   async getList(params: UserQueryParamsDto) {
     const { username, status, currentPage, pageSize } = params;
-    const skip = (currentPage - 1) * pageSize;
+
+    let paginationParams: { skip?: number; take?: number } = {};
+    if (currentPage !== undefined && pageSize !== undefined) {
+      paginationParams = { skip: (currentPage - 1) * pageSize, take: pageSize };
+    }
 
     const where: any = {};
     if (username) {
@@ -27,8 +31,7 @@ export class UserService {
     const [list, total] = await Promise.all([
       this.prisma.user.findMany({
         where,
-        skip,
-        take: pageSize,
+        ...paginationParams,
         omit: {
           password: true,
         },
