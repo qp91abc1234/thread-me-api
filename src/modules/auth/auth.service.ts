@@ -32,7 +32,6 @@ export class AuthService {
     if (!user) {
       // 创建新用户
       const defaultPassword = this.configService.get('OAUTH_DEFAULT_PASSWORD');
-      const defaultRoleName = this.configService.get('OAUTH_DEFAULT_ROLE_NAME');
       const hashedPassword = await bcrypt.hash(defaultPassword, 10);
 
       user = await this.prisma.user.create({
@@ -42,11 +41,6 @@ export class AuthService {
           realName: profile.displayName || profile.username || '',
           email: profile.emails?.[0]?.value || '',
           phone: '',
-          roles: {
-            connect: {
-              name: defaultRoleName,
-            },
-          },
         },
         include: {
           roles: {

@@ -15,12 +15,24 @@ export class PermissionService {
 
   // ========== Menu Methods ==========
 
-  async getMenuTree(status?: number) {
-    // 获取所有菜单
+  async getMenuTree(status?: number, roleIds?: number[]) {
+    // 构建查询条件
+    const where: any = {};
+    if (status !== undefined) {
+      where.status = status;
+    }
+    // 如果提供了 roleIds，只返回这些角色有权限的菜单
+    if (roleIds && roleIds.length > 0) {
+      where.roles = {
+        some: {
+          id: { in: roleIds },
+        },
+      };
+    }
+
+    // 获取菜单
     const menus = await this.prisma.menu.findMany({
-      where: {
-        status,
-      },
+      where,
       include: {
         children: true,
       },

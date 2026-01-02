@@ -209,18 +209,20 @@ async function bindApiPermissionsToAdmin(): Promise<void> {
 
 // 执行收集
 async function main() {
+  let hasError = false;
   let app;
   try {
     app = await collectApiPermissions();
     await bindApiPermissionsToAdmin();
   } catch (error) {
     console.error('❌ Error during API permission collection:', error);
-    process.exit(1);
+    hasError = true;
   } finally {
     if (app) {
       await app.close();
     }
     await prisma.$disconnect();
+    process.exit(hasError ? 1 : 0);
   }
 }
 
