@@ -52,9 +52,6 @@ export class PermissionService {
         if (parent) {
           parent.children = parent.children || [];
           parent.children.push(menuNode);
-        } else {
-          // 如果父节点不存在，作为根节点
-          rootMenus.push(menuNode);
         }
       } else {
         rootMenus.push(menuNode);

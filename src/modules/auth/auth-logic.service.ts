@@ -55,6 +55,7 @@ export class AuthLogicService {
     });
 
     return {
+      userId: user.id,
       token,
       refreshToken,
     };

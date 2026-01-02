@@ -15,15 +15,8 @@ export class LoginUserDto {
   password: string;
 }
 
-export class LoginUserVo {
-  token: string;
-  refreshToken: string;
-}
-
 export class RefreshTokenDto {
   @IsNotEmpty()
   @IsString()
   refreshToken: string;
 }
-
-export class RefreshTokenVo extends LoginUserVo {}

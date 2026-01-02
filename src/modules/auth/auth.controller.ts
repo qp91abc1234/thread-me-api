@@ -8,12 +8,7 @@ import {
   Res,
   Query,
 } from '@nestjs/common';
-import {
-  LoginUserDto,
-  LoginUserVo,
-  RefreshTokenDto,
-  RefreshTokenVo,
-} from './dto/auth.dto';
+import { LoginUserDto, RefreshTokenDto } from './dto/auth.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
@@ -36,7 +31,7 @@ export class AuthController {
   async login(
     @Body() loginUserDto: LoginUserDto,
     @Request() req: { user: UserForAuth },
-  ): Promise<LoginUserVo> {
+  ) {
     return await this.authLogicService.sign(req.user);
   }
 
@@ -57,9 +52,7 @@ export class AuthController {
   }
 
   @Post('refresh')
-  async refresh(
-    @Body() refreshTokenDto: RefreshTokenDto,
-  ): Promise<RefreshTokenVo> {
+  async refresh(@Body() refreshTokenDto: RefreshTokenDto) {
     return await this.authService.refresh(refreshTokenDto.refreshToken);
   }
 }
