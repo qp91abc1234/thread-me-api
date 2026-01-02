@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
   IsOptional,
@@ -6,6 +7,7 @@ import {
   IsBoolean,
   IsArray,
   ValidateIf,
+  ValidateNested,
 } from 'class-validator';
 
 // ========== Menu DTOs ==========
@@ -40,9 +42,8 @@ export class CreateMenuDto {
   status: number;
 
   @IsOptional()
-  @ValidateIf((o) => o.parentId !== null)
   @IsInt()
-  parentId?: number | null;
+  parentId?: number;
 }
 
 export class UpdateMenuDto {
@@ -79,9 +80,8 @@ export class UpdateMenuDto {
   status?: number;
 
   @IsOptional()
-  @ValidateIf((o) => o.parentId !== null)
   @IsInt()
-  parentId?: number | null;
+  parentId?: number;
 }
 
 export class MenuSortItemDto {
@@ -89,9 +89,8 @@ export class MenuSortItemDto {
   id: number;
 
   @IsOptional()
-  @ValidateIf((o) => o.parentId !== null)
   @IsInt()
-  parentId?: number | null;
+  parentId?: number;
 
   @IsInt()
   sort: number;
@@ -100,6 +99,8 @@ export class MenuSortItemDto {
 export class MenuSortDto {
   @IsNotEmpty()
   @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => MenuSortItemDto)
   items: MenuSortItemDto[];
 }
 

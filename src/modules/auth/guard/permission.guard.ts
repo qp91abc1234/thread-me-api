@@ -1,7 +1,7 @@
+import { BusinessExceptions } from '@/common/utils/exception/business.exception';
+import { PrismaService } from '@/infrastructure/prisma/prisma.service';
+import { RedisService } from '@/infrastructure/redis/redis.service';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { RedisService } from '../../infrastructure/redis/redis.service';
-import { PrismaService } from '../../infrastructure/prisma/prisma.service';
-import { BusinessExceptions } from '../utils/exception/business.exception';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()

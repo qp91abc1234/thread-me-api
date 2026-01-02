@@ -1,8 +1,8 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-import { METADATA_KEY } from '../constant/constant';
-import { BusinessExceptions } from '../utils/exception/business.exception';
+import { METADATA_KEY } from '../../../common/constant/constant';
+import { BusinessExceptions } from '../../../common/utils/exception/business.exception';
 
 @Injectable()
 export class JwtGuard extends AuthGuard('jwt') {

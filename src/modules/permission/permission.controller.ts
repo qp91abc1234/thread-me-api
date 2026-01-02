@@ -52,6 +52,12 @@ export class PermissionController {
     return await this.permissionService.createMenu(createMenuDto);
   }
 
+  @Put('menu/sort')
+  @ApiOperation({ summary: '更新菜单排序' })
+  async updateMenuSort(@Body() sortDto: MenuSortDto) {
+    return await this.permissionService.updateMenuSort(sortDto);
+  }
+
   @Put('menu/:id')
   @ApiOperation({ summary: '更新菜单' })
   async updateMenu(
@@ -65,12 +71,6 @@ export class PermissionController {
   @ApiOperation({ summary: '删除菜单' })
   async deleteMenu(@Param('id', ParseIntPipe) id: number) {
     return await this.permissionService.deleteMenu(id);
-  }
-
-  @Put('menu/sort')
-  @ApiOperation({ summary: '更新菜单排序' })
-  async updateMenuSort(@Body() sortDto: MenuSortDto) {
-    return await this.permissionService.updateMenuSort(sortDto);
   }
 
   // ========== API Permission Endpoints ==========

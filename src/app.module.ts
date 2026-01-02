@@ -15,8 +15,7 @@ import { ThrottlerStorageService } from './infrastructure/throttler-storage/thro
 import { CommonExceptionFilter } from './common/filter/common-exception.filter';
 import { HttpExceptionFilter } from './common/filter/http-exception.filter';
 import { PrismaClientExceptionFilter } from './common/filter/prisma-exception.filter';
-import { JwtGuard } from './common/guard/jwt.guard';
-import { PermissionGuard } from './common/guard/permission.guard';
+import { JwtGuard } from './modules/auth/guard/jwt.guard';
 import { RespInterceptor } from './common/interceptor/resp.interceptor';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -25,6 +24,7 @@ import { FileUploadModule } from './modules/file-upload/file-upload.module';
 import { RoleModule } from './modules/role/role.module';
 import { UserModule } from './modules/user/user.module';
 import { PermissionModule } from './modules/permission/permission.module';
+import { PermissionGuard } from './modules/auth/guard/permission.guard';
 
 @Module({
   imports: [

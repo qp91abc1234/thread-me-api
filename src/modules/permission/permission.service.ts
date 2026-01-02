@@ -151,15 +151,15 @@ export class PermissionService {
 
   async updateMenuSort(sortDto: MenuSortDto) {
     // 批量更新菜单排序
-    const updatePromises = sortDto.items.map((item) =>
-      this.prisma.menu.update({
+    const updatePromises = sortDto.items.map((item) => {
+      return this.prisma.menu.update({
         where: { id: item.id },
         data: {
           sort: item.sort,
           parentId: item.parentId,
         },
-      }),
-    );
+      });
+    });
 
     await Promise.all(updatePromises);
 
