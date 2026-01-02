@@ -33,9 +33,6 @@ export class PermissionService {
     // 获取菜单
     const menus = await this.prisma.menu.findMany({
       where,
-      include: {
-        children: true,
-      },
     });
 
     // 构建树形结构
@@ -53,6 +50,7 @@ export class PermissionService {
       if (menu.parentId) {
         const parent = menuMap.get(menu.parentId);
         if (parent) {
+          parent.children = parent.children || [];
           parent.children.push(menuNode);
         } else {
           // 如果父节点不存在，作为根节点
@@ -67,7 +65,7 @@ export class PermissionService {
     const sortMenus = (menus: any[]) => {
       menus.sort((a, b) => a.sort - b.sort);
       menus.forEach((menu) => {
-        if (menu.children.length > 0) {
+        if (menu.children && menu.children.length > 0) {
           sortMenus(menu.children);
         }
       });
