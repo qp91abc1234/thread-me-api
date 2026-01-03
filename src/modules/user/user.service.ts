@@ -166,6 +166,10 @@ export class UserService {
       }
     }
 
+    if (updateUserDto.password) {
+      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
+    }
+
     const { roleIds, ...updateData } = updateUserDto;
 
     // 更新用户
@@ -179,9 +183,6 @@ export class UserService {
                 set: roleIds.map((roleId) => ({ id: roleId })),
               }
             : undefined,
-      },
-      omit: {
-        password: true,
       },
       include: {
         roles: {

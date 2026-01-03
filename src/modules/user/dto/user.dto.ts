@@ -68,6 +68,10 @@ export class UpdateUserDto {
   realName?: string;
 
   @IsOptional()
+  @IsString()
+  password?: string;
+
+  @IsOptional()
   @IsEmail()
   email?: string;
 
