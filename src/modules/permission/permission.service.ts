@@ -158,8 +158,55 @@ export class PermissionService {
   }
 
   async updateMenuSort(sortDto: MenuSortDto) {
-    // 批量更新菜单排序
-    const updatePromises = sortDto.items.map((item) => {
+    // 从菜单表读取所有系统菜单的ID数组和名称
+    const systemMenus = await this.prisma.menu.findMany({
+      where: { isSystem: true },
+      select: { id: true, name: true },
+    });
+
+    // 创建系统菜单名称映射，用于快速判断和错误提示
+    const systemMenuNameMap = new Map(
+      systemMenus.map((menu) => [menu.id, menu.name]),
+    );
+
+    // 过滤掉系统菜单，同时检查是否有菜单被移到系统目录下
+    const nonSystemItems: typeof sortDto.items = [];
+    const systemParentIds: number[] = [];
+
+    for (const item of sortDto.items) {
+      // 跳过系统菜单本身
+      if (systemMenuNameMap.has(item.id)) {
+        continue;
+      }
+
+      // 检查父菜单是否是系统菜单
+      if (item.parentId && systemMenuNameMap.has(item.parentId)) {
+        systemParentIds.push(item.parentId);
+        continue;
+      }
+
+      nonSystemItems.push(item);
+    }
+
+    // 如果有菜单被移到系统目录下，抛出异常
+    if (systemParentIds.length > 0) {
+      const systemParentNames = Array.from(
+        new Set(systemParentIds.map((id) => systemMenuNameMap.get(id))),
+      )
+        .filter(Boolean)
+        .join('、');
+      throw BusinessExceptions.OPERATION_FORBIDDEN(
+        `无法将菜单移动到系统目录下：${systemParentNames}`,
+      );
+    }
+
+    // 如果没有需要更新的菜单，直接返回
+    if (nonSystemItems.length === 0) {
+      return true;
+    }
+
+    // 批量更新菜单排序（只更新非系统菜单）
+    const updatePromises = nonSystemItems.map((item) => {
       return this.prisma.menu.update({
         where: { id: item.id },
         data: {
