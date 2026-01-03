@@ -60,6 +60,7 @@ model Menu {
   sort        Int      @default(0)
   visible     Boolean  @default(true)
   status      Int      @default(1)      // 状态：0-禁用，1-启用
+  isSystem    Boolean  @default(false)
   createTime  DateTime @default(now())
   updateTime  DateTime @updatedAt
 

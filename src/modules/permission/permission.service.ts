@@ -116,6 +116,10 @@ export class PermissionService {
       throw BusinessExceptions.NO_PERMISSION('菜单不存在');
     }
 
+    if (existingMenu.isSystem) {
+      throw BusinessExceptions.OPERATION_FORBIDDEN('系统菜单，无法修改');
+    }
+
     const menu = await this.prisma.menu.update({
       where: { id },
       data: updateMenuDto,
@@ -135,6 +139,10 @@ export class PermissionService {
 
     if (!menu) {
       throw BusinessExceptions.NO_PERMISSION('菜单不存在');
+    }
+
+    if (menu.isSystem) {
+      throw BusinessExceptions.OPERATION_FORBIDDEN('系统菜单，无法删除');
     }
 
     // 如果有子菜单，不能删除

@@ -73,6 +73,7 @@ const SEED_CONFIG = {
       sort: 0,
       visible: true,
       status: 1,
+      isSystem: true,
       parentId: null,
       children: [
         {
@@ -84,6 +85,7 @@ const SEED_CONFIG = {
           sort: 0,
           visible: true,
           status: 1,
+          isSystem: true,
         },
         {
           name: '角色管理',
@@ -94,6 +96,7 @@ const SEED_CONFIG = {
           sort: 1,
           visible: true,
           status: 1,
+          isSystem: true,
         },
         {
           name: '菜单管理',
@@ -104,6 +107,7 @@ const SEED_CONFIG = {
           sort: 2,
           visible: true,
           status: 1,
+          isSystem: true,
         },
       ],
     },
