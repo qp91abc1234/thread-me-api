@@ -135,9 +135,6 @@ import { PermissionGuard } from './modules/auth/guard/permission.guard';
       useValue: new ValidationPipe({
         transform: true,
         whitelist: true,
-        transformOptions: {
-          enableImplicitConversion: true,
-        },
       }),
     },
     {

@@ -18,7 +18,6 @@
 配置说明：
 - `transform: true`: 自动将普通 JavaScript 对象转换为 DTO 类实例。
 - `whitelist: true`: 自动剔除 DTO 中未定义的属性（过滤多余字段），防止恶意注入无关数据。
-- `transformOptions.enableImplicitConversion: true`: 开启隐式类型转换，例如将 URL 参数中的字符串数字转换为数字类型。
 
 **相关代码位置：** `src/app.module.ts`
 

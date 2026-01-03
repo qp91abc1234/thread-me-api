@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Query,
   DefaultValuePipe,
+  ParseArrayPipe,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { PermissionService } from './permission.service';
@@ -36,8 +37,10 @@ export class PermissionController {
       new ParseIntPipe({ optional: true }),
     )
     status?: number,
+    @Query('roleIds', new ParseArrayPipe({ optional: true, items: Number }))
+    roleIds?: number[],
   ) {
-    return await this.permissionService.getMenuTree(status);
+    return await this.permissionService.getMenuTree(status, roleIds);
   }
 
   @Get('menu/:id')
