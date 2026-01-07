@@ -211,7 +211,7 @@ export class PermissionService {
         where: { id: item.id },
         data: {
           sort: item.sort,
-          parentId: item.parentId,
+          parentId: item.parentId ?? null,
         },
       });
     });
