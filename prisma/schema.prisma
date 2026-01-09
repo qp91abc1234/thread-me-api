@@ -2,6 +2,7 @@
 generator client {
   provider = "prisma-client" // 使用 Prisma Client 生成器
   output   = "./generated"    // 生成的代码输出目录
+  moduleFormat = "cjs"
 }
 
 // 数据库相关配置
