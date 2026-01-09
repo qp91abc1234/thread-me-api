@@ -21,7 +21,7 @@ function init(app: INestApplication) {
     .build();
   const document = SwaggerModule.createDocument(app, docConfig);
 
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('docs', app, document);
   return document;
 }
 
