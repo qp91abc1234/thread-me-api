@@ -91,8 +91,8 @@ import { PermissionGuard } from './modules/auth/guard/permission.guard';
       ) => ({
         throttlers: [
           {
-            ttl: config.get('THROTTLE_TTL', 60) * 1000, // 时间窗口（毫秒）
-            limit: config.get('THROTTLE_LIMIT', 100), // 限制次数
+            ttl: Number(config.get('THROTTLE_TTL', 60)) * 1000, // 时间窗口（毫秒）
+            limit: Number(config.get('THROTTLE_LIMIT', 100)), // 限制次数
           },
         ],
         storage,
