@@ -2,7 +2,7 @@
   
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
-    "package.json": "pnpm-lock.yaml,Dockerfile,.gitignore,.dockerignore,.prettierrc,.eslintrc.js",
+    "package.json": "pnpm-lock.yaml,.gitignore,.prettierrc,.eslintrc.js",
     ".env": ".env.*",
     "tsconfig.json": "tsconfig.*",
   }
