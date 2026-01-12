@@ -18,5 +18,10 @@ export function buildFullPath(
     ? methodPath
     : `/${methodPath}`;
 
+  // 如果 controllerPath 为根路径，直接返回规范化后的 methodPath
+  if (controllerPath === '/') {
+    return normalizedMethodPath;
+  }
+
   return `${controllerPath}${normalizedMethodPath}`;
 }
