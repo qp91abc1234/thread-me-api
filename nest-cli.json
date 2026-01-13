@@ -6,10 +6,12 @@
     "spec": false
   },
   "compilerOptions": {
-    "assets": [ {
-      "include": "../public/**/*",
-      "outDir": "dist/public"
-    }],
+    "assets": [
+      {
+        "include": "../public/**/*",
+        "outDir": "dist/public"
+      }
+    ],
     "watchAssets": true,
     "deleteOutDir": true,
     "plugins": [{"name":"@nestjs/swagger", "options": {
