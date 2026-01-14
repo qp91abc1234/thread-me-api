@@ -8,7 +8,11 @@ import {
   Res,
   Query,
 } from '@nestjs/common';
-import { LoginUserDto, RefreshTokenDto } from './dto/auth.dto';
+import {
+  LoginUserDto,
+  RefreshTokenDto,
+  CaptchaResponseVo,
+} from './dto/auth.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
@@ -16,6 +20,8 @@ import { Response } from 'express';
 import { AuthLogicService, UserForAuth } from './auth-logic.service';
 import { GithubAuthGuard } from './guard/github.guard';
 import { RequireNoLogin } from '@/common/decorator/common.decorator';
+import { CaptchaGuard } from './guard/captcha.guard';
+import { CaptchaService } from './captcha.service';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -24,10 +30,16 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly authLogicService: AuthLogicService,
+    private readonly captchaService: CaptchaService,
   ) {}
 
+  @Get('captcha')
+  async getCaptcha(): Promise<CaptchaResponseVo> {
+    return await this.captchaService.generate();
+  }
+
   @Post('login')
-  @UseGuards(AuthGuard('local'))
+  @UseGuards(CaptchaGuard, AuthGuard('local'))
   async login(
     @Body() loginUserDto: LoginUserDto,
     @Request() req: { user: UserForAuth },

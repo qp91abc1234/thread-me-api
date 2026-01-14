@@ -15,6 +15,15 @@ const createException = (
 
 export const BusinessExceptions = {
   // ========== 401 Unauthorized - 认证失败 ==========
+  CAPTCHA_INVALID: (detail?: string) =>
+    createException(
+      {
+        code: 'CAPTCHA_INVALID',
+        message: detail || '验证码错误或已过期',
+      },
+      HttpStatus.UNAUTHORIZED,
+    ),
+
   PWD_ERR: () =>
     createException(
       { code: 'PWD_ERR', message: '密码错误' },

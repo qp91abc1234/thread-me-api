@@ -13,10 +13,27 @@ export class LoginUserDto {
   @IsString()
   @Length(6, 100)
   password: string;
+
+  @IsNotEmpty()
+  @IsString()
+  captchaId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Length(4, 4)
+  captchaCode: string;
 }
 
 export class RefreshTokenDto {
   @IsNotEmpty()
   @IsString()
   refreshToken: string;
+}
+
+export class CaptchaResponseVo {
+  /** 验证码ID */
+  captchaId: string;
+
+  /** SVG图片数据 */
+  svg: string;
 }
