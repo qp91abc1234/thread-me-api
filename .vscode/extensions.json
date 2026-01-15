@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "hookyqr.beautify",
+    "ms-ceintl.vscode-language-pack-zh-hans",
+    "editorconfig.editorconfig",
+    "dbaeumer.vscode-eslint",
+    "stylelint.vscode-stylelint",
+    "eamodio.gitlens",
+    "prisma.prisma"
+  ]
+}
