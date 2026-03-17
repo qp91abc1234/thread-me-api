@@ -19,7 +19,16 @@ export const BusinessExceptions = {
     createException(
       {
         code: 'CAPTCHA_INVALID',
-        message: detail || '验证码错误或已过期',
+        message: detail || '验证码无效',
+      },
+      HttpStatus.UNAUTHORIZED,
+    ),
+
+  CAPTCHA_EXPIRED: (detail?: string) =>
+    createException(
+      {
+        code: 'CAPTCHA_EXPIRED',
+        message: detail || '验证码已过期',
       },
       HttpStatus.UNAUTHORIZED,
     ),

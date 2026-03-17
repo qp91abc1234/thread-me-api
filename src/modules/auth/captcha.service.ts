@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as svgCaptcha from 'svg-captcha';
 import { v4 as uuidv4 } from 'uuid';
 import { RedisService } from '../../infrastructure/redis/redis.service';
+import { BusinessExceptions } from '@/common/utils/exception/business.exception';
 
 /**
  * 验证码配置
@@ -62,9 +63,9 @@ export class CaptchaService {
    * @param captchaCode 用户输入的验证码
    * @returns 是否验证通过
    */
-  async verify(captchaId: string, captchaCode: string): Promise<boolean> {
+  async verify(captchaId: string, captchaCode: string) {
     if (!captchaId || !captchaCode) {
-      return false;
+      throw BusinessExceptions.CAPTCHA_INVALID('验证码信息异常');
     }
 
     // 从Redis获取验证码
@@ -73,7 +74,7 @@ export class CaptchaService {
     );
 
     if (!storedCode) {
-      return false; // 验证码不存在或已过期
+      throw BusinessExceptions.CAPTCHA_EXPIRED();
     }
 
     // 不区分大小写比较
@@ -82,8 +83,8 @@ export class CaptchaService {
     // 验证后立即删除验证码（防止重复使用）
     if (isValid) {
       await this.redisService.del(`${CAPTCHA_CONFIG.keyPrefix}${captchaId}`);
+    } else {
+      throw BusinessExceptions.CAPTCHA_INVALID();
     }
-
-    return isValid;
   }
 }
