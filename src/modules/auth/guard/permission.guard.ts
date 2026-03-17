@@ -27,11 +27,6 @@ export class PermissionGuard implements CanActivate {
     const { method, route } = request;
     const { roleIds } = request.user;
 
-    // 如果没有角色，拒绝访问
-    if (!roleIds || roleIds.length === 0) {
-      throw BusinessExceptions.OPERATION_FORBIDDEN('用户未分配角色');
-    }
-
     // 尝试从 Redis 获取权限，如果缓存不存在则从数据库查询
     const permissions = await this.getUserPermissions(roleIds);
     // 检查是否有匹配的权限
@@ -53,26 +48,11 @@ export class PermissionGuard implements CanActivate {
   /**
    * 获取用户权限（优先从 Redis，不存在则从数据库查询）
    */
-  private async getUserPermissions(roleIds: number[]): Promise<string[]> {
+  private async getUserPermissions(roleIds: number[] = []): Promise<string[]> {
     const allPermissions = new Set<string>();
 
-    // 验证角色是否存在（过滤已删除的角色）
-    const existingRoles = await this.prisma.role.findMany({
-      where: { id: { in: roleIds } },
-      include: {
-        apiPermissions: true,
-      },
-    });
-
-    // 如果所有角色都被删除，返回空权限
-    if (existingRoles.length === 0) {
-      return [];
-    }
-
-    const existingRoleIds = existingRoles.map((role) => role.id);
-
     // 尝试从 Redis 获取每个角色的权限
-    const cachePromises = existingRoleIds.map(async (roleId) => {
+    const cachePromises = roleIds.map(async (roleId) => {
       const cached = await this.redisService.get<string[]>(
         `role:${roleId}:permissions`,
       );
