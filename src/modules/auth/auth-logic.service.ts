@@ -40,19 +40,25 @@ export class AuthLogicService {
       );
     }
 
-    // JWT payload 中只包含必要信息（不包含权限，从Redis读取）
-    const jwtPayload = {
-      userId: user.id,
-      roleIds: user.roleIds,
-    };
+    const token = this.jwtService.sign(
+      {
+        userId: user.id,
+        roleIds: user.roleIds,
+      },
+      {
+        expiresIn: accessTokenExpireTime,
+      },
+    );
 
-    const token = this.jwtService.sign(jwtPayload, {
-      expiresIn: accessTokenExpireTime,
-    });
-
-    const refreshToken = this.jwtService.sign(jwtPayload, {
-      expiresIn: refreshTokenExpireTime,
-    });
+    const refreshToken = this.jwtService.sign(
+      {
+        userId: user.id,
+        type: 'refresh',
+      },
+      {
+        expiresIn: refreshTokenExpireTime,
+      },
+    );
 
     return {
       userId: user.id,

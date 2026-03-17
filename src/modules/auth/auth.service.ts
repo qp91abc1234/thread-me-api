@@ -79,8 +79,12 @@ export class AuthService {
     const data = this.jwtService.verify(refreshToken) as {
       exp: number;
       userId: number;
-      roleIds: number[];
+      type: 'refresh';
     };
+
+    if (data.type !== 'refresh') {
+      throw BusinessExceptions.TOKEN_INVALID();
+    }
 
     // 查询用户及其权限
     const user = await this.prisma.user.findUnique({
