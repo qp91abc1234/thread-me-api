@@ -6,7 +6,6 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthLogicService } from './auth-logic.service';
 import { CaptchaService } from './captcha.service';
-import { CaptchaGuard } from './guard/captcha.guard';
 import { UserModule } from '../user/user.module';
 
 @Module({
@@ -16,7 +15,6 @@ import { UserModule } from '../user/user.module';
     AuthService,
     AuthLogicService,
     CaptchaService,
-    CaptchaGuard,
     JwtStrategy,
     LocalStrategy,
     GithubStrategy,
